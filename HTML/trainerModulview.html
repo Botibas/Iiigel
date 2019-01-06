@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="../bootstrap-3.3.7-dist\bootstrap-3.3.7-dist\css\bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="../Styles\trainerModulview.css" type="text/css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <!-- Schrift -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+</head>
+
+<body>
+
+    <div id="WrappingContainer" class="container">
+
+        <div id="Container" class="row">
+
+            <div class="col-md-9 col-xs-12 noPadding">
+                <h1 id="ModulHeading">%Gruppenname%</h1>
+            </div>
+
+            %Navigation%
+
+            <div class="row">
+
+                <div class="col-md-12">
+                    <p id="Institution"><span class="glyphicon glyphicon-education"></span> %Institution%</p>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div id="OverviewContainer" class="row">
+
+            <div class="col-md-8 noPadding">
+
+                <table id="Table" class="table">
+                    <thead>
+                        <tr>
+                            <th>Vorname</th>
+                            <th>Nachname</th>
+                            <th class="hidden-xs">Fortschritt</th>
+                            <th style="text-align:center;">Kapitel</th>
+                            <th></th>
+                            <!--Kapitelhochsetzen-->
+                            <th></th>
+                            <!--Abgabe-Benachrichtigung-->
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        %Tablerow%					
+						<tr> 
+							<td class="fulltd" colspan="6"> <button id="PlusTNBtn" class="btn btn-default" data-toggle="modal" data-target="#myTNModal"> <span class="glyphicon glyphicon-plus"></span> </button> </td> 
+						</tr>
+                    </tbody>
+                </table>
+            </div>
+			
+			
+
+            <!-- Modal Abgabe -->
+            <div id="myModal" class="modal fade" role="dialog">
+                <div class="modal-dialog" style="width:85%;">
+
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Abgabe</h4>
+                        </div>
+                        <div class="modal-body">
+                            <p id="ModalText" style="white-space: pre; font-family: Courier New">..</p><!--AL das Fenster, wo die Abgabe des TN beim Trainer reingestellt wird, mit CSS so formatiert, dass man die Zeilenumbrüche mitnimmt-->
+                        </div>
+                        <div class="modal-footer">
+							<form action="post"><button id="RejectBtn" type="button" class="btn btn-default" data-dismiss="modal" value="" onclick="rejectHandIn(this)">Ablehnen</button></form>
+                            <button id="ModalBtn" type="button" class="btn btn-default" data-dismiss="modal" value="" onclick="acceptHandIn(this)">Annehmen</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+			
+			
+			<!-- Modal TN Hinzufügen -->
+					<div id="myTNModal" class="modal fade" role="dialog">
+						<div class="modal-dialog">
+
+							<!-- Modal content-->
+							<div class="modal-content">
+								<div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal" onclick="deleteDanger()">&times;</button>
+									<h4 class="modal-title">Teilnehmer hinzufügen</h4>
+								</div>
+								<form id="myForm2" action="" method="post" autocomplete="off" >
+									<div class="modal-body">
+										<div class="form-group">
+												<div id="DropdownContainer" class="dropdown">
+                                                        <select class="btn btn-default dropdown-toggle addForm" name="UserID">
+						                                    %allTN%
+                                                            <span class="caret"></span>
+				                                        </select>   
+                        						</div>
+										</div>
+
+									</div>
+									<!---type="submit" value="text" name="newPass" -->
+                                    <div class="modal-footer">
+                                        <button type= "submit" name = "HinzuButton" id="ModalBtn" class="btn btn-default">Hinzufügen</button>
+                                    </div>
+                                </form>
+							</div>
+						</div>
+					</div>
+            
+            <!--- Modal Link hinzufügen --->
+                    <!-- Modal -->
+					
+
+            <div id="LeftContainer" class="col-md-4">
+
+                <div class="btn-group" role="group">
+
+                    <a href="%TogglelinkK%"><button id="ChapterViewButton" class="btn btn-default"> <span class="glyphicon glyphicon-list"></span>  Kapitel</button></a>
+                </div>
+
+                <div id="AllLevelUp">
+                    <p>Setze alle Benutzer auf mindestens: </p>
+                    <form name="form" id="form" method="post">
+                        <div id="DropdownContainer" class="dropdown">
+                            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                Kapitel
+                            <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu scrollable-menu" aria-labelledby="dropdownMenu1">
+                                %ChapterDropDownItems%
+                            </ul>
+                        </div>
+
+                        <button id="PinkButton" class="btn btn-default" value="test" name="levelUpforAll" type="submit">OK!</button>
+                    </form>
+
+                    <audio id="PingAudio">
+                      <source src="../Sounds/pip.wav" type="audio/wav">
+                    </audio>
+
+                </div>
+
+                <div id="InvitationLinks" class="col-md-8">
+                    <h3>Aktive Einladungs-Links</h3>
+                    <table id="Table" class="table">
+                        <thead>
+                            <tr>
+                                <th>Link</th>
+                                <th>Enddatum</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            %linkrow%
+                            <tr> 
+								<td class="fulltd" colspan="6"> <button id="PlusTNBtn" class="btn btn-default" data-toggle="modal" data-target="#myLinkModal"> <span class="glyphicon glyphicon-plus"></span> </button> </td> 
+							</tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+    </div>
+	</div>
+
+</body>
+
+</html>
+
+<script>
+	var handinArray=%handIn%;
+    var handinID = [];
+    var lastDeletedUser;
+    var currentTrainerOfModule;
+	
+    $(document).ready(function() {
+        $(".dropdown-menu li a").click(function() {
+            $("#dropdownMenu1").text($(this).text());
+            document.form.PinkButton.value = $(this).closest('li').index();
+
+        });
+    });
+
+    $(document).ready(function() {
+        $(".notification").click(function() {
+            $(this).css("color", "#ddd");
+        });
+    });
+
+    window.setInterval(isHandIn, 1000);
+
+    function isHandIn() {
+        $groupID = "%GroupID%";
+		refreshUserProgress();
+        $.ajax({
+            url: "getHandIn.php?groupID=" + $groupID,
+            success: function(result) {
+                //alert(result);
+                $size = result.match(/,/g).length;
+                $text = result.split(",");
+                audio = document.getElementById("PingAudio");
+                audio.loop = false;
+                for (var e = 0; e < $size; e++) {
+                    $userHandInID = $text[e];
+                    for (var i = 0; i < document.getElementsByClassName("notification").length; i++) {
+                        if ((document.getElementsByClassName("notification")[i].id == $userHandInID) && (document.getElementsByClassName("notification")[i].style.color != "rgb(227, 20, 101)")) {
+                            document.getElementsByClassName("notification")[i].style.color = "#e31465";
+                            audio.play();
+							refreshHandin($userHandInID);
+                            document.getElementsByClassName("notification")[i].setAttribute("data-toggle", "modal");
+                            document.getElementsByClassName("notification")[i].setAttribute("data-target", "#myModal");
+                        }
+                    }
+
+                }
+                //document.form.Bla.value = "#ff00000";
+            }
+        });
+    }
+	
+	
+	function refreshUserProgress(){
+		$.ajax({
+            url: "getProgressFromGroup.php?groupID=" + $groupID,
+			success: function(data) {
+				data = data.replace(/[\[\]&]+/g, '');
+				var dataArr = data.split("_"); // progress[0] = progress, progress[1] = progresspercent
+				var progress = dataArr[0].split(",");
+				var progressPercent = dataArr[1].split(",");
+				var rows = document.getElementsByClassName("TRModulRow");
+				var progressCells = document.getElementsByClassName("chapter");
+				var percentCells = document.getElementsByClassName("progress-bar");
+				console.log(rows);
+				for(var i=0; i< progress.length; i++){
+					progressCells[i].innerHTML = progress[i] ;
+					percentCells[i].setAttribute("aria-valuenow", progressPercent[i]);
+					percentCells[i].style.width=progressPercent[i]+"%";
+				}
+			},
+        });	
+	}
+	
+	
+	function refreshHandin(userID){
+		$.ajax({
+            url: "getHandInFromUser.php?groupID=" + $groupID + "&" + "tnID=" + userID,
+			success: function(data) {
+				handinArray[userID] = data;
+                getHandInID(userID);
+			},
+        });
+	}
+    
+    function getHandInID(userID){
+		$.ajax({
+            url: "getHandInIDFromUser.php?groupID=" + $groupID + "&" + "tnID=" + userID,
+			success: function(data) {
+				handinID[userID] = data;
+			},
+        });
+	}
+							
+
+    function modalValue(tnId) {
+        document.getElementById("ModalBtn").value = tnId;
+		document.getElementById("RejectBtn").value = tnId;
+		
+		document.getElementById("ModalText").innerHTML= handinArray[tnId];
+    }
+
+    function acceptHandIn(obj) {
+        var tnID = obj.value;
+        $groupID = "%GroupID%";
+
+        $.ajax({
+            url: "acceptHandIn.php?groupID=" + $groupID + "&" + "tnID=" + tnID + "&" + "handinID=" + handInID[tnID],
+			success: function(data) {location.reload();},
+        });
+
+       
+    }
+	
+	function rejectHandIn(obj) {
+        var tnID = obj.value;
+        $groupID = "%GroupID%";
+
+        $.ajax({
+            url: "rejectHandIn.php?groupID=" + $groupID + "&" + "tnID=" + tnID + "&" + "handinID=" + handinID[tnID],
+			success: function(data) {
+				location.reload();},
+        });
+
+       
+    }
+
+
+</script>

@@ -1,0 +1,150 @@
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<link rel="stylesheet" href="../Styles/AdminInstitution.css" type="text/css">
+
+	<link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+	<link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
+
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<!-------------------------------BOOTSTRAP--------------------------------->
+	<link rel="stylesheet" href="../bootstrap-3.3.7-dist\bootstrap-3.3.7-dist\css\bootstrap.min.css" type="text/css">
+
+	<!---------------------------------GOOGLE FONTS--------------------->
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+
+
+
+</head>
+
+<body class="body">
+	<div id="WrappingContainer" class="container">
+		<div id="header">
+			<span class="glyphicon glyphicon-education col-md-1" style="font-size:55px;margin-top:27px;margin-left:30px;float:left;"></span>
+
+			<h1 class="headline col-md-7" style="float:left;">%Gruppenname%</h1>
+            %Navigation%
+			<button type="submit" id="Button" name="NextButton" class="btn btn-default col-md-1 " style="margin-top:50px;float:left;">
+                <a href="AdminModulDetail.php" style="text-decoration:none;color:#000;">Modul</a>
+            </button>
+
+			<button type="submit" id="Button" name="NextButton" class="btn btn-default col-md-1 " style="margin-top:50px;float:left; margin-left:50px;">
+                <a href="AdminInstitution.php" style="text-decoration:none;color:#000;">Institutionen</a>
+            </button>
+			<div style="clear:both;"></div>
+
+			<span class="glyphicon glyphicon-search searchIcon "></span>
+			<form>
+				<input type="text" name="search" placeholder="Suche Benutzer..." class="searchField  ">
+			</form>
+			<div style="clear:both;"></div>
+			<hr width="270px" size="2px" class="line">
+		</div>
+
+        
+             <div id="institutionsOverview" class="col-md-8">
+                <h3> Trainer</h3>
+			<table id="Table" class="table">
+				<thead>
+					<tr>
+						<th>Vorname</th>
+						<th>Nachname</th>
+						<th>Username</th>
+						<th>E-Mail</th>
+                        <th>mache Teilnehmer</th>
+					</tr>
+				</thead>
+				<tbody>
+					%tablerowTrainer%
+				</tbody>
+			</table>
+		</div>
+
+               
+        
+
+		<div id="institutionsOverview" class="col-md-8">
+            <h3> Teilnehmer</h3>
+			<table id="Table" class="table">
+				<thead>
+					<tr>
+						<th>Vorname</th>
+						<th>Nachname</th>
+						<th>Username</th>
+						<th>E-Mail</th>
+                        <th>mache Trainer</th>
+					</tr>
+				</thead>
+				<tbody>
+					%tablerow%
+				</tbody>
+			</table>
+		</div>
+ 
+        
+            
+        	<div id="addUser" class="col-md-3">
+			<p> <b>Benutzer hinzufügen</b></p>
+				<form action="AdminGroupUserHinzufugen.php" id="myForm" method="post" autocomplete="off">
+            
+				<input name="GroupID" id="GroupID" type="hidden" value="%GroupID%" class="addForm" placeholder="Gruppenname">
+				<select class="btn btn-default dropdown-toggle addForm" name="UserID">
+						%Listitems%
+				    <span class="caret"></span>
+				</select>
+                    	<h6>Benutzername</h6>
+			     <button type="submit" id="Button" name="AbgabeButton" data-toggle="modal" data-target="#myModal" class="btn btn-default col-md-6" onclick="phpaufrufen();">
+                Hinzufügen
+            </button>
+			</form>
+		
+		</div>
+        
+        
+        <div id="institutionsOverview" class="col-md-8">
+            <h3> Einladungs-Links</h3>
+			<table id="Table" class="table">
+				<thead>
+					<tr>
+						<th>Link</th>
+						<th>StartDatum</th>
+						<th>Enddatum</th>
+					</tr>
+				</thead>
+				<tbody>
+					%linkrow%
+				</tbody>
+			</table>
+		</div>
+   
+
+	   <div id="addInviteLink" class="col-md-3">
+			<p> <b>Einladelink hinzufügen</b></p>
+				<form action="AdminGroupLinkhinzufuegen.php" id="myForm" method="post" autocomplete="off">
+            
+				    <input name="link" id="link" type="text" value="" class="addForm" placeholder="Linkstring">
+                    <input name="startdate" id="startdate" type="date" value="" class="addForm" placeholder="Startdatum">
+				    <input name="enddate" id="enddate" type="date" value="" class="addForm" placeholder="Enddatum">
+			         <input name="GroupID" id="GroupID" type="hidden" value="%GroupID%" class="addForm" placeholder="Gruppenname">
+			     <button type="submit" id="addLink" name="addLink" class="btn btn-default col-md-6">
+                Hinzufügen
+            </button>
+			</form>
+		
+		</div>
+        
+        
+
+
+
+
+
+	</div>
+
+</body>
+
+</html>

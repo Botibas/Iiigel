@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="../bootstrap-3.3.7-dist\bootstrap-3.3.7-dist\css\bootstrap.min.css" type="text/css">
+	<link rel="stylesheet" href="../Styles\AdminUserView.css" type="text/css">
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<!-- Schrift -->
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+</head>
+
+<body>
+
+	<div id="WrappingContainer" class="container">
+
+		<div id="Container" class="row">
+
+			<div class="col-md-9 col-xs-12 noPadding">
+				<h1 id="ModulHeading">Benutzer Verwaltung</h1>
+			</div>
+
+			%Navigation%
+
+		</div>
+
+		<div id="SearchContainer" class="row">
+			<form method="post" action="" class="col-md-12 noPadding">
+				<input class="search form" type="text" name="search" placeholder="Benutzersuche.." value="%lastSearch%">
+				<button id="GoButton" type="submit" class="btn btn-default" name="search-btn"> <span class="glyphicon glyphicon-search"></span> Los!</button>
+			</form>
+		</div>
+
+		<div id="OverviewContainer" class="row">
+
+			<div class="col-md-12 noPadding">
+
+				<table id="Table" class="table">
+					<thead>
+						<tr>
+							<th class="chapter centerLeft">Benutzername</th>
+							<th class="centerLeft">Vorname</th>
+							<th class="centerLeft">Nachname</th>
+							<th class="centerLeft">E-Mail Adresse</th>
+							<th class="center">Bearbeiten</th>
+							<!--Kapitelhochsetzen-->
+							<th class="center">Löschen</th>
+							<!--Abgabe-Benachrichtigung-->
+
+						</tr>
+					</thead>
+					<tbody>
+						%Tablerow%
+					</tbody>
+				</table>
+			</div>
+
+		</div>
+        
+        	<div id="myModal" class="modal fade" role="dialog">
+				<div class="modal-dialog">
+
+					<!-- Modal content-->
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal">&times;</button>
+							<h4 class="modal-title">User Löschen</h4>
+						</div>
+						<div class="modal-body">
+
+							<div class="container">
+								<div class="row">
+									<div class="col-md-12">
+										<div class="panel-body">
+											<formgroup>
+                                                <p>Wollen Sie wirklich diesen Nutzer löschen?</p>
+											</formgroup>
+
+										</div>
+									</div>
+								</div>
+							</div>
+
+						</div>
+						<div class="modal-footer">
+							<button name="DeleteUser" type="button" class="btn btn-default" data-dismiss="modal" value="156" onclick="commitChanges()" style="background-color:#e31465; color:#FFFFFF;">Löschen</button>
+						</div>
+					</div>
+
+				</div>
+			</div>
+
+	</div>
+
+</body>
+    
+<script>
+
+
+	function openModal(data) {
+
+		$('#myModal').modal('show');
+		console.log("Hallo");
+
+	}
+</script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    
+</html>

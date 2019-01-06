@@ -1,0 +1,178 @@
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<link rel="stylesheet" href="../Styles/AdminInstitution.css" type="text/css">
+
+	<link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+	<link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
+
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<!-------------------------------BOOTSTRAP--------------------------------->
+	<link rel="stylesheet" href="../bootstrap-3.3.7-dist\bootstrap-3.3.7-dist\css\bootstrap.min.css" type="text/css">
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+
+	<!---------------------------------GOOGLE FONTS--------------------->
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+
+
+
+</head>
+
+<body class="body">
+	<div id="WrappingContainer" class="container">
+		<div id="header">
+			<span class="glyphicon glyphicon-education col-md-1" style="font-size:55px;margin-top:27px;margin-left:30px;float:left;"></span>
+
+			<h1 class="headline col-md-3" style="float:left;">Gruppen</h1>
+
+			%Navigation%
+
+			<button type="submit" id="Button" name="NextButton" class="btn btn-default col-md-1 " style="margin-top:50px;float:left;">
+                <a href="AdminInstitution.php" style="text-decoration:none;color:#000;">Institutionen </a>
+            </button>
+
+			<button type="submit" id="Button" name="NextButton" class="btn btn-default col-md-1 " style="margin-top:50px;float:left; margin-left:50px;">
+                <a href="AdminModulDetail.php" style="text-decoration:none;color:#000;">Module</a>
+            </button>
+			<div style="clear:both;"></div>
+
+			<span class="glyphicon glyphicon-search searchIcon "></span>
+			<form>
+				<input type="text" name="search" placeholder="Suche Gruppen..." class="searchField  ">
+			</form>
+			<div style="clear:both;"></div>
+			<hr width="270px" size="2px" class="line">
+		</div>
+
+
+		<div id="institutionsOverview" class="col-md-8">
+			<table id="Table" class="table">
+				<thead>
+					<tr>
+						<th>Gruppenbezeichnung</th>
+						<th>Trainer</th>
+						<th>Bearbeiten</th>
+					</tr>
+				</thead>
+				<tbody>
+					%tablerow%
+				</tbody>
+			</table>
+		</div>
+
+		<div id="addGroup" class="col-md-3">
+			<p> <b>Gruppe hinzufügen</b></p>
+			<form action="AdminGroupHinzufugen.php" id="myForm" method="post" autocomplete="off">
+				<input name="sName" id="sName" type="text" class="addForm" placeholder="Gruppenname">
+				<input name="sInstitutionID" id="sInstitutionID" type="hidden" value="%InstitutionID%" class="addForm" placeholder="Gruppenname">
+				<div class="dropdown">
+
+					<select class="btn btn-default dropdown-toggle addForm" name="ModulID">
+						%Listitems%
+						<span class="caret"></span>
+                    </select>
+				</div>
+                
+                <p style="margin-top: 5px"> <b>Trainer auswählen</b></p>
+                <div class="dropdown">
+
+					<select class="btn btn-default dropdown-toggle addForm" name="UserID">
+						%UListitems%
+						<span class="caret"></span>
+                    </select>
+				</div>
+                
+                <input type="submit" value="Hinzufügen" style="margin-top: 10px" class="btn btn-default col-md-6">
+
+
+
+				<!--button type="submit" id="Button" name="AddButton" class="btn btn-default col-md-6">
+					Hinzufügen
+				</button--->
+			</form>
+
+		</div>
+
+
+
+
+	</div>
+
+	<script>
+		function checkForm() {
+			$pw1 = document.getElementById("pw1").value;
+			$pw2 = document.getElementById("pw2").value;
+			$.ajax({
+				type: "POST",
+				url: "setPassword.php",
+				data: {
+					userID: "%userID%",
+					passwort1: $pw1,
+					passwort2: $pw2
+				},
+				success: function(result) {
+					//todo Interpretieren des Ergebnisses
+					if (result == "") {
+						$('#myModal').modal('hide');
+					}
+					if (result == "Die beiden Passwörter stimmen nicht überein.") document.getElementById("passError").innerHTML = "Die beiden 			Passwörter stimmen nicht überein.";
+					if (result == "Das eingegebene Passwort ist zu kurz. Es muss länger als 6 Zeichen sein.")
+						document.getElementById("passError").innerHTML = "Das eingegebene Passwort ist zu kurz. Es muss länger als 6 Zeichen sein.";
+					if (result == "Bitte wiederholen sie ihr Passwort") document.getElementById("passError").innerHTML = "Bitte wiederholen sie ihr 	Passwort";
+					if (result == "Bitte geben Sie ein Passwort ein.") document.getElementById("passError").innerHTML = "Bitte geben Sie ein Passwort 	  ein.";
+				}
+
+			});
+		}
+
+		$(document).ready(function() {
+			$(".dropdown-menu li a").click(function() {
+				$("#dropdownMenu1").text($(this).text());
+				document.form.AddButton.value = $(this).closest('li').index();
+
+				var array = [];
+
+				var headers = [];
+				$('#dataTable th').each(function(index, item) {
+					headers[index] = $(item).html();
+				});
+				$('#dataTable tr').has('td').each(function() {
+					var arrayItem = {};
+					$('td', $(this)).each(function(index, item) {
+						arrayItem[headers[index]] = $(item).html();
+					});
+					array.push(arrayItem);
+				});
+
+				array = [$(this).closest('li').index()];
+				document.form.AddButton.value = array[$(this).closest('li').index()].value;
+			});
+		});
+
+		function phpaufrufen() {
+
+			$.ajax({
+				type: "POST",
+				url: "AdminGroupHinzufugen.php",
+				data: {
+					sName: document.getElementById("UsersName").value
+				},
+				success: function(result) {
+					location.reload()
+				},
+
+			});
+		}
+
+	</script>
+
+
+</body>
+
+</html>
