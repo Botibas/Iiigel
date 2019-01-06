@@ -319,10 +319,10 @@ INSERT INTO `registrationlinkinstitution` (`ID`, `Link`, `InstitutionID`, `Start
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `rights`
+-- Tabellenstruktur für Tabelle `usertorights`
 --
 
-CREATE TABLE `rights` (
+CREATE TABLE `usertorights` (
   `UserID` int(11) NOT NULL,
   `Name` varchar(255) NOT NULL,
   `ID` int(11) DEFAULT NULL,
@@ -334,10 +334,10 @@ CREATE TABLE `rights` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Daten für Tabelle `rights`
+-- Daten für Tabelle `usertorights`
 --
 
-INSERT INTO `rights` (`UserID`, `Name`, `ID`, `canView`, `canEdit`, `canCreate`, `canDelete`, `isDeleted`) VALUES
+INSERT INTO `usertorights` (`UserID`, `Name`, `ID`, `canView`, `canEdit`, `canCreate`, `canDelete`, `isDeleted`) VALUES
 (6, 'Chapter', 40, 1, 1, 0, 0, 0),
 (6, 'ModulChapter', 1, 1, 0, 0, 0, 0),
 (7, 'ModulChapter', 1, 1, 0, 0, 0, 0),
