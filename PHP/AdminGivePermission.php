@@ -17,7 +17,7 @@
 
 	if (isset($_GET["activeTab"])) {
 		$activeTab = $_GET["activeTab"];
-        //fjrio0gtn0p
+        //AL: Mein Penis ist Groß
     }
 
 	foreach($allPermissionNames as $row) {                                                              //Einbettung von Permissionnames
