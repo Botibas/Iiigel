@@ -182,17 +182,17 @@
             $this->stmtisUserinInstitution = $this->db_connection->prepare("SELECT * FROM usertoinstitution WHERE UserID = ? AND InstitutionID = ?");
             $this->stmtisTrainerofGroup = $this->db_connection->prepare("SELECT * FROM usertogroup WHERE UserID = ? AND GroupID = ? AND bIsTrainer = 1 ");
 			$this->stmtisNewHandIn = $this->db_connection->prepare("SELECT * FROM handins WHERE UserID = ? AND GroupID = ? AND ChapterID = ? AND bIsAccepted = 0 AND isRejected = 0");
-            $this->stmthasPermissiontoView = $this->db_connection->prepare("SELECT * FROM rights WHERE UserID = ? AND Name = ? AND (ID = ? OR ID IS NULL) AND canView = 1 AND isDeleted = 0");
-            $this->stmthasPermissiontoEdit = $this->db_connection->prepare("SELECT * FROM rights WHERE UserID = ? AND Name = ? AND (ID = ? OR ID IS NULL) AND canEdit = 1 AND isDeleted = 0");
-            $this->stmthasPermissiontoCreate = $this->db_connection->prepare("SELECT * FROM rights WHERE UserID = ? AND Name = ? AND (ID = ? OR ID IS NULL) AND canCreate = 1 AND isDeleted = 0");
-            $this->stmthasPermissiontoDelete = $this->db_connection->prepare("SELECT * FROM rights WHERE UserID = ? AND Name = ? AND (ID = ? OR ID IS NULL) AND canDelete = 1 AND isDeleted = 0");
+            $this->stmthasPermissiontoView = $this->db_connection->prepare("SELECT * FROM usertorights WHERE UserID = ? AND Name = ? AND (ID = ? OR ID IS NULL) AND canView = 1 AND isDeleted = 0");
+            $this->stmthasPermissiontoEdit = $this->db_connection->prepare("SELECT * FROM usertorights WHERE UserID = ? AND Name = ? AND (ID = ? OR ID IS NULL) AND canEdit = 1 AND isDeleted = 0");
+            $this->stmthasPermissiontoCreate = $this->db_connection->prepare("SELECT * FROM usertorights WHERE UserID = ? AND Name = ? AND (ID = ? OR ID IS NULL) AND canCreate = 1 AND isDeleted = 0");
+            $this->stmthasPermissiontoDelete = $this->db_connection->prepare("SELECT * FROM usertorights WHERE UserID = ? AND Name = ? AND (ID = ? OR ID IS NULL) AND canDelete = 1 AND isDeleted = 0");
             $this->stmtisGroupLink = $this->db_connection->prepare("SELECT * FROM registrationlinkgroup WHERE Link = ? AND CURRENT_DATE() BETWEEN StartDatum AND EndDatum");
             $this->stmtisInstitutionLink = $this->db_connection->prepare("SELECT * FROM registrationlinkinstitution WHERE Link = ?");
             $this->stmtisGroupLinkgueltig = $this->db_connection->prepare("SELECT * FROM registrationlinkgroup WHERE Link = ? AND CURRENT_DATE() BETWEEN StartDatum AND EndDatum");
             $this->stmtisInstitutionLinkgueltig = $this->db_connection->prepare("SELECT * FROM registrationlinkinstitution WHERE Link = ? AND StartDatum >= CURDATE() AND EndDatum <= CURDATE()");
             $this->stmtisUserDeleted = $this->db_connection->prepare("SELECT * FROM users WHERE ID = ? AND bIsDeleted = 1");
-            $this->stmtisAdmin = $this->db_connection->prepare("SELECT * FROM rights WHERE UserID = ? AND Name = 'Admin' AND isDeleted = 0");
-            $this->stmtisEditor = $this->db_connection->prepare("SELECT * FROM rights WHERE UserID = ? AND Name = 'canEdit' AND isDeleted = 0");
+            $this->stmtisAdmin = $this->db_connection->prepare("SELECT * FROM usertorights WHERE UserID = ? AND Name = 'Admin' AND isDeleted = 0");
+            $this->stmtisEditor = $this->db_connection->prepare("SELECT * FROM usertorights WHERE UserID = ? AND Name = 'canEdit' AND isDeleted = 0");
             $this->stmtisInstitutionsLeader = $this->db_connection->prepare("SELECT * FROM usertoinstitution WHERE UserID = ? AND bIsInstitutionleader = 1");
             $this->stmtisGroupLinkTaken = $this->db_connection->prepare("SELECT * FROM registrationlinkgroup WHERE Link = ? AND CURRENT_DATE() BETWEEN StartDatum AND EndDatum");
             $this->stmtisInstitutionLinkTaken = $this->db_connection->prepare("SELECT * FROM registrationlinkinstitution WHERE Link = ? AND CURRENT_DATE() BETWEEN StartDatum AND EndDatum");
@@ -237,7 +237,7 @@
             $this->stmtCountSearchedUsers = $this->db_connection->prepare("SELECT COUNT(ID) FROM users WHERE (sUsername LIKE ? OR sFirstName LIKE ? OR sLastName LIKE ?) AND bIsDeleted = 0 ORDER BY sFirstName,sLastName");
             $this->stmtCountUsersFromModule = $this->db_connection->prepare("SELECT COUNT(UserID) FROM usertogroup INNER JOIN groups ON usertogroup.GroupID = groups.ID WHERE ModulID = ?");
             $this->stmtCountUsersFromGroup = $this->db_connection->prepare("SELECT COUNT(ID) FROM users INNER JOIN usertogroup ON usertogroup.UserID = users.ID WHERE GroupID = ? AND bIsDeleted = 0");
-            $this->stmtCountUsersFromPermission = $this->db_connection->prepare("SELECT COUNT(Name) FROM users INNER JOIN rights ON rights.UserID = users.ID WHERE rights.Name = ? AND users.bIsDeleted = 0 AND rights.isDeleted = 0");
+            $this->stmtCountUsersFromPermission = $this->db_connection->prepare("SELECT COUNT(Name) FROM users INNER JOIN usertorights ON usertorights.UserID = users.ID WHERE usertorights.Name = ? AND users.bIsDeleted = 0 AND usertorights.isDeleted = 0");
             $this->stmtCountAllUsersFromInstitutionNotInGroup = $this->db_connection->prepare("SELECT COUNT(ID) FROM users Left Join (SELECT * FROM usertogroup WHERE GroupID = ?) AS usertogroupSubset On usertogroupSubset.UserID = users.ID Left Join usertoinstitution ON usertoinstitution.UserID = users.ID WHERE GroupID IS NULL AND InstitutionID = ? AND bIsDeleted = 0");
             $this->stmtCountAllUsersNotInInstitution = $this->db_connection->prepare("SELECT COUNT(ID) FROM users LEFT JOIN (SELECT * FROM usertoinstitution WHERE InstitutionID = ?) AS usertoinstitutionSubset ON usertoinstitutionSubset.UserID = users.ID WHERE usertoinstitutionSubset.InstitutionID IS NULL AND bIsDeleted = 0");
             $this->stmtCountAllLinksFromGroup = $this->db_connection->prepare("SELECT COUNT(ID) FROM registrationlinkgroup WHERE GroupID = ?");
@@ -267,13 +267,13 @@
             $this->stmtGetInstitutionsFromUserID = $this->db_connection->prepare("SELECT * FROM institutions INNER JOIN usertoinstitution ON institutions.ID = usertoinstitution.InstitutionID WHERE UserID = ?");
             $this->stmtGetUsersFromInstitution = $this->db_connection->prepare("SELECT * FROM users INNER JOIN usertoinstitution ON users.ID = usertoinstitution.UserID WHERE InstitutionID = ? AND bIsDeleted = 0 ORDER BY sFirstName,sLastName");
             $this->stmtGetUsersFromGroup = $this->db_connection->prepare("SELECT * FROM users INNER JOIN usertogroup ON usertogroup.UserID = users.ID WHERE GroupID = ? AND bIsDeleted = 0 ORDER BY sFirstName,sLastName");
-            $this->stmtGetUsersFromPermission = $this->db_connection->prepare("SELECT * FROM users INNER JOIN rights ON rights.UserID = users.ID WHERE rights.Name = ? AND users.bIsDeleted = 0 AND rights.isDeleted = 0 ORDER BY sFirstName,sLastName");
+            $this->stmtGetUsersFromPermission = $this->db_connection->prepare("SELECT * FROM users INNER JOIN usertorights ON usertorights.UserID = users.ID WHERE usertorights.Name = ? AND users.bIsDeleted = 0 AND usertorights.isDeleted = 0 ORDER BY sFirstName,sLastName");
             $this->stmtGetModulesFromInstitution = $this->db_connection->prepare("SELECT * FROM modules INNER JOIN moduletoinstitution ON modules.ID = moduletoinstitution.ModuleID WHERE InstitutionID = ? ORDER BY modules.sName");
             $this->stmtGetGroupsFromInstitution = $this->db_connection->prepare("SELECT * FROM groups WHERE InstitutionsID = ? AND bIsDeleted = 0 ORDER BY sName");
             $this->stmtGetHighestIndexFromChapter = $this->db_connection->prepare("SELECT MAX(iIndex) FROM chapters WHERE ModulID = ? AND bIsDeleted=0");
             $this->stmtSearchUsers = $this->db_connection->prepare("SELECT * FROM users WHERE (sUsername LIKE ? OR sFirstName LIKE ? OR sLastName LIKE ?) AND bIsDeleted = 0 ORDER BY sFirstName,sLastName");
-            $this->stmtGetPermissionsFromName = $this->db_connection->prepare("SELECT *, rights.ID AS pID FROM rights INNER JOIN users ON rights.userID = users.ID WHERE rights.Name = ? AND rights.isDeleted = 0 AND users.bIsDeleted = 0");
-            $this->stmtGetPermissionNames = $this->db_connection->prepare("SELECT DISTINCT Name FROM rights WHERE isDeleted = 0 ORDER BY Name");
+            $this->stmtGetPermissionsFromName = $this->db_connection->prepare("SELECT *, usertorights.ID AS pID FROM usertorights INNER JOIN users ON usertorights.userID = users.ID WHERE usertorights.Name = ? AND usertorights.isDeleted = 0 AND users.bIsDeleted = 0");
+            $this->stmtGetPermissionNames = $this->db_connection->prepare("SELECT DISTINCT Name FROM usertorights WHERE isDeleted = 0 ORDER BY Name");
             
             //--------------------------------------------------------- UPDATES -----------------------------------------------------------------
             $this->stmtSetProfilePic = $this->db_connection->prepare("UPDATE users SET sProfilePicture = ? WHERE ID = ?");
@@ -292,11 +292,11 @@
             $this->stmtMakeUsertoTrainer = $this->db_connection->prepare("UPDATE usertogroup SET bIsTrainer = 1 WHERE UserID = ? AND GroupID = ?");
             $this->stmtMakeUsertoNotTrainer = $this->db_connection->prepare("UPDATE usertogroup SET bIsTrainer = 0 WHERE UserID = ? AND GroupID = ?");
             $this->stmtAcceptHandIn = $this->db_connection->prepare("UPDATE handins SET bIsAccepted = 1 WHERE UserID = ? AND GroupID = ? AND ChapterID = ? AND ID = ?");
-            $this->stmtUpdatePermissionView = $this->db_connection->prepare("UPDATE rights SET canView = ? WHERE UserID = ? AND Name = ? AND (ID = ? OR ID IS NULL)");
-            $this->stmtUpdatePermissionEdit = $this->db_connection->prepare("UPDATE rights SET canEdit = ? WHERE UserID = ? AND Name = ? AND (ID = ? OR ID IS NULL) ");
-            $this->stmtUpdatePermissionCreate = $this->db_connection->prepare("UPDATE rights SET canCreate = ? WHERE UserID = ? AND Name = ? AND (ID = ? OR ID IS NULL) ");
-            $this->stmtUpdatePermissionDelete = $this->db_connection->prepare("UPDATE rights SET canDelete = ? WHERE UserID = ? AND Name = ? AND (ID = ? OR ID IS NULL)");
-            $this->stmtUpdateCompletePermission = $this->db_connection->prepare("UPDATE rights SET UserID = ?, Name = ?, ID = ?, canView = ?, canEdit = ?, canCreate = ?, canDelete = ? WHERE UserID = ? AND Name = ? AND ID = ? AND canView = ? AND canEdit = ? AND canCreate = ? AND canDelete = ? AND isDeleted = 0");
+            $this->stmtUpdatePermissionView = $this->db_connection->prepare("UPDATE usertorights SET canView = ? WHERE UserID = ? AND Name = ? AND (ID = ? OR ID IS NULL)");
+            $this->stmtUpdatePermissionEdit = $this->db_connection->prepare("UPDATE usertorights SET canEdit = ? WHERE UserID = ? AND Name = ? AND (ID = ? OR ID IS NULL) ");
+            $this->stmtUpdatePermissionCreate = $this->db_connection->prepare("UPDATE usertorights SET canCreate = ? WHERE UserID = ? AND Name = ? AND (ID = ? OR ID IS NULL) ");
+            $this->stmtUpdatePermissionDelete = $this->db_connection->prepare("UPDATE usertorights SET canDelete = ? WHERE UserID = ? AND Name = ? AND (ID = ? OR ID IS NULL)");
+            $this->stmtUpdateCompletePermission = $this->db_connection->prepare("UPDATE usertorights SET UserID = ?, Name = ?, ID = ?, canView = ?, canEdit = ?, canCreate = ?, canDelete = ? WHERE UserID = ? AND Name = ? AND ID = ? AND canView = ? AND canEdit = ? AND canCreate = ? AND canDelete = ? AND isDeleted = 0");
             
             //------------------------------------------------------- INSERTS -------------------------------------------------------------------
             
@@ -313,14 +313,14 @@
             $this->stmtaddLeadertoInstitution = $this->db_connection->prepare("INSERT INTO usertoinstitution VALUES (?,?,1)");
             $this->stmtaddGroupInvitationLink = $this->db_connection->prepare("INSERT INTO registrationlinkgroup(Link,GroupID,StartDatum,EndDatum) VALUES (?,?,?,?)");
             $this->stmtaddInstitutionInvitationLink = $this->db_connection->prepare("INSERT INTO registrationlinkinstitution (Link,InstitutionID,StartDatum,EndDatum) VALUES (?,?,?,?)");
-            $this->stmtaddPermission = $this->db_connection->prepare("INSERT INTO rights (UserID,Name,ID,canView,canEdit,canCreate,canDelete,isDeleted)  VALUES (?,?,?,?,?,?,?,0)");
+            $this->stmtaddPermission = $this->db_connection->prepare("INSERT INTO usertorights (UserID,Name,ID,canView,canEdit,canCreate,canDelete,isDeleted)  VALUES (?,?,?,?,?,?,?,0)");
             
             //------------------------------------------------------- DELETES ------------------------------------------------------------------
             
             $this->stmtdeleteUser = $this->db_connection->prepare("UPDATE users SET bIsDeleted = 1 WHERE ID = ?");
             $this->stmtremoveUserFromGroup = $this->db_connection->prepare("DELETE FROM usertogroup WHERE UserID = ? AND GroupID = ?");
             $this->stmtrejectHandIn = $this->db_connection->prepare("UPDATE handins SET isRejected = 1 WHERE UserID = ? AND GroupID = ? AND ChapterID = ? AND ID = ?");
-            $this->stmtdeletePermission = $this->db_connection->prepare("UPDATE rights SET isDeleted=1 WHERE UserID = ? AND Name = ? AND ID = ?");
+            $this->stmtdeletePermission = $this->db_connection->prepare("UPDATE usertorights SET isDeleted=1 WHERE UserID = ? AND Name = ? AND ID = ?");
             $this->stmtdeleteChapter = $this->db_connection->prepare("UPDATE chapters SET bIsDeleted = 1 WHERE ID= ?");
         }
         
