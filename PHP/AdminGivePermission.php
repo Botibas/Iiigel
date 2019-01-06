@@ -17,6 +17,7 @@
 
 	if (isset($_GET["activeTab"])) {
 		$activeTab = $_GET["activeTab"];
+        //fjrio0gtn0p
     }
 
 	foreach($allPermissionNames as $row) {                                                              //Einbettung von Permissionnames
