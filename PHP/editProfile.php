@@ -1,3 +1,4 @@
+<!--JN- Auf diser seite Können die Userprofile daten vom user selbst geändert werden-->
 <?php
     ob_start();
     session_start();
@@ -49,7 +50,7 @@
 		$email = htmlspecialchars($email);
 
 		
-		if (!empty($username)) {
+		if (!empty($username)) { <!--JN- Begin fehler beim speichern-->
             if (strlen($username)<3) {
                 $error = true;
                 $usernameError = "Ihr Benutzername muss länger als 3 Zeichen sein";
@@ -82,7 +83,7 @@
                 if ($ODB->isViableEMail($userID, $email) == false){
                     $error = true;
                     $emailError = "Ihre angegebene E-Mail ist bereits vergeben.";
-                }
+                } <!--JN- Ende fehler beim speichern-->
             }
         }
         
@@ -145,49 +146,49 @@
 								<label for="exampleInputFile" class="label noPadding"><span class="glyphicon glyphicon-picture" aria-hidden="true"></span> Profilbild hochladen</label>
 								<form action="upload.php" method="post" enctype="multipart/form-data">
 									<!--<input type="hidden" name="MAX_FILE_SIZE" value="800000" />-->
-									<input type="file" name="datei" value="Hochladen" id="exampleInputFile" style="float:left;">
-									<button id="Hochladen" type="submit" class="btn btn-default" name="Hochladen">Hochladen</button>
+									<input type="file" name="datei" value="Hochladen" id="exampleInputFile" style="float:left;"> <!--JN- Datei auswählen button-->
+									<button id="Hochladen" type="submit" class="btn btn-default" name="Hochladen">Hochladen</button> <!--JN -Profilbild Hochladen button-->
 								</form>
 							</div>
 						</div>
 
 						<div class="col-md-2 noPadding">
-							<button id="PasswortButton" class="btn btn-default" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-pencil"></span> Passwort ändern</button>
+							<button id="PasswortButton" class="btn btn-default" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-pencil"></span> Passwort ändern</button> <!--JN - Passwort ändern button auf der seite-->
 						</div>
 					</div>
 
 					<!-- Modal -->
-					<div id="myModal" class="modal fade" role="dialog">
+					<div id="myModal" class="modal fade" role="dialog"> <!-- JN -Begin Passwort ändern Pop Up -->
 						<div class="modal-dialog">
 
 							<!-- Modal content-->
 							<div class="modal-content">
 								<div class="modal-header">
 									<button type="button" class="close" data-dismiss="modal" onclick="deleteDanger()">&times;</button>
-									<h4 class="modal-title">Passwort ändern</h4>
+									<h4 class="modal-title">Passwort ändern</h4> 
 								</div>
 								<form id="myForm2" action="" method="post" autocomplete="off">
 									<div class="modal-body">
 										<div class="form-group">
 											<label for="exampleInputPrename">neues Passwort</label>
-											<input id="pw1" type="text" name="passwort1" class="form-control form" value="">
+											<input id="pw1" type="text" name="passwort1" class="form-control form" value=""> <!--JN -Eingabe neues Passwort-->
 											<span id="passError" class="text-danger"></span>
 										</div>
 
 										<div class="form-group">
 											<label for="exampleInputPrename">Passwort wiederholen</label>
-											<input id="pw2" type="text" name="passwort2" class="form-control form" value="">
+											<input id="pw2" type="text" name="passwort2" class="form-control form" value=""> <!--JN -Eingabe neues Passwort (widerholen)-->
 										</div>
-									</div>
+									</div> 
 									<!---type="submit" value="text" name="newPass" -->
 								</form>
 								<div class="modal-footer">
-									<button id="ModalBtn" class="btn btn-default" onclick="setNewPass(); deleteDanger() ">Passwort ändern</button>
+									<button id="ModalBtn" class="btn btn-default" onclick="setNewPass(); deleteDanger() ">Passwort ändern</button> <!--JN- Passwort ändern Butten Pop Up-->
 								</div>
 							</div>
 
 						</div>
-					</div>
+					</div><!--JN -Ende passwort ändern Pop up-->
 
 
 					<form id="myForm" method="post" action="" autocomplete="off">
@@ -195,12 +196,12 @@
 							<div class="col-md-6 noPadding">
 								<div class="form-group">
 									<label for="exampleInputPrename">Vorname</label>
-									<input type="text" name="vorname" class="form-control form" value="<?php if(isset($vorname))  echo $vorname; ?>" placeholder="<?php echo $myUser->getsFirstName(); ?>">
+									<input type="text" name="vorname" class="form-control form" value="<?php if(isset($vorname))  echo $vorname; ?>" placeholder="<?php echo $myUser->getsFirstName(); ?>"> <!--JN- Eingabe Vorname-->
 									<span class="text-danger"><?php if(isset($vornameError)) echo $vornameError; ?> </span>
 								</div>
 								<div class="form-group">
 									<label for="exampleInputLastname">Nachname</label>
-									<input type="text" name="nachname" class="form-control form" placeholder="<?php echo $myUser->getsLastName(); ?>" value="<?php if(isset($nachname)) echo $nachname; ?>">
+									<input type="text" name="nachname" class="form-control form" placeholder="<?php echo $myUser->getsLastName(); ?>" value="<?php if(isset($nachname)) echo $nachname; ?>"> <!--JN- Eingabe nachname-->
 									<span class="text-danger"><?php if(isset($nachnameError)) echo $nachnameError; ?> </span>
 								</div>
 
@@ -209,12 +210,12 @@
 
 								<div class="form-group">
 									<label for="exampleInputUsername">Benutzername</label>
-									<input type="text" name="username" class="form-control form" placeholder="<?php echo $myUser->getsUsername(); ?>" value="<?php if(isset($username))echo $username;?>">
+									<input type="text" name="username" class="form-control form" placeholder="<?php echo $myUser->getsUsername(); ?>" value="<?php if(isset($username))echo $username;?>"> <!--JN- Eingabe Username-->
 									<span class="text-danger"><?php if(isset($usernameError)) echo $usernameError; ?> </span>
 								</div>
 								<div class="form-group">
 									<label for="exampleInputMail"><span class="glyphicon glyphicon-envelope"></span> E-Mail Adresse</label>
-									<input type="email" name="email" class="form-control form" placeholder="<?php echo $myUser->getsEmail(); ?>" value="<?php if(isset($email)) echo $email;  ?>">
+									<input type="email" name="email" class="form-control form" placeholder="<?php echo $myUser->getsEmail(); ?>" value="<?php if(isset($email)) echo $email;  ?>"> <!--JN- Eingabe email-->
 									<span class="text-danger"><?php if(isset($emailError)) echo $emailError; ?> </span>
 								</div>
 
@@ -225,14 +226,14 @@
 						<div id="" class="row">
 							<div class="col-md-2 noPadding">
 
-								<button id="PinkButton" type="submit" class="btn btn-block btn-primary pinkButton" name="btn-save">Speichern</button>
+								<button id="PinkButton" type="submit" class="btn btn-block btn-primary pinkButton" name="btn-save">Speichern</button> <!--JN- Userdaten Speichern Button (speichern)-->
 							</div>
 						</div>
 					</form>
 
 					<div class="col-md-2">
 						<form id="ZurückButton" action="../PHP/userOverview.php">
-							<button id="Button" type="submit" class="btn btn-default">Zurück</button>
+							<button id="Button" type="submit" class="btn btn-default">Zurück</button> <!--JN- zurück button führt zur userOverview.php-->
 						</form>
 					</div>
 
