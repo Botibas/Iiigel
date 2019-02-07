@@ -156,7 +156,7 @@
         private $stmtremoveUserFromGroup;
         private $stmtdeleteChapter;
         private $stmtrejectHandIn;
-        private $stmtdeletePermission;
+        private $stmtdeleteallPermissionsFromUser;
         
 
         private function query($statement) {
@@ -313,14 +313,14 @@
             $this->stmtaddLeadertoInstitution = $this->db_connection->prepare("INSERT INTO usertoinstitution VALUES (?,?,1)");
             $this->stmtaddGroupInvitationLink = $this->db_connection->prepare("INSERT INTO registrationlinkgroup(Link,GroupID,StartDatum,EndDatum) VALUES (?,?,?,?)");
             $this->stmtaddInstitutionInvitationLink = $this->db_connection->prepare("INSERT INTO registrationlinkinstitution (Link,InstitutionID,StartDatum,EndDatum) VALUES (?,?,?,?)");
-            $this->stmtaddPermission = $this->db_connection->prepare("INSERT INTO usertorights (UserID,Name,ID,canView,canEdit,canCreate,canDelete,isDeleted)  VALUES (?,?,?,?,?,?,?,0)");
+            $this->stmtaddPermission = $this->db_connection->prepare("INSERT INTO usertorights (UserID,Name,ID,isDeleted)  VALUES (?,?,?,0)");
             
             //------------------------------------------------------- DELETES ------------------------------------------------------------------
             
             $this->stmtdeleteUser = $this->db_connection->prepare("UPDATE users SET bIsDeleted = 1 WHERE ID = ?");
             $this->stmtremoveUserFromGroup = $this->db_connection->prepare("DELETE FROM usertogroup WHERE UserID = ? AND GroupID = ?");
             $this->stmtrejectHandIn = $this->db_connection->prepare("UPDATE handins SET isRejected = 1 WHERE UserID = ? AND GroupID = ? AND ChapterID = ? AND ID = ?");
-            $this->stmtdeletePermission = $this->db_connection->prepare("UPDATE usertorights SET isDeleted=1 WHERE UserID = ? AND Name = ? AND ID = ?");
+            $this->stmtdeleteallPermissionsFromUser = $this->db_connection->prepare("DELETE FROM usertorights WHERE UserID = ?");
             $this->stmtdeleteChapter = $this->db_connection->prepare("UPDATE chapters SET bIsDeleted = 1 WHERE ID= ?");
         }
         
@@ -705,6 +705,7 @@
             $InstitutionIDCCMG = $this->getInstitutionIDFromCodeClub();
             $InstitutionIDGAG = $this->getInstitutionIDFromGAG();
             $GroupID = $this->getGroupIDFromTutorialModule();
+            $this->addPermission($ID,"TN",NULL);
             if ($isAGUser == true or $isIFUser == true){// AL: Früher wurde zwischen AG und IF-Kursen unterschieden
                 //$this->addUsertoInstitution($UserID,$InstitutionIDCCMG);  AL: Ursprüngliche Zeile, der User wird nun nichtmehr in CodeClub, sondern in GAG gebracht, das hat keinen Sinn das haben wir nur aus Einfachkeitsgründen gemacht. Deswegen die InstitutionsID 1.
                 $this->addUsertoInstitution($UserID,1);
@@ -745,7 +746,7 @@
         
         public function addTrainertoGroup($UserID,$GroupID){
             $ModulID = $this->getModuleFromGroup($GroupID);
-            $this->addPermission($UserID,'ModulChapter',$ModulID,1,0,0,0);
+            $this->addPermission($UserID,'ModulChapter',$ModulID);
             $this->stmtaddTrainertoGroup->bind_param("ii",$UserID,$GroupID);
             $this->stmtaddTrainertoGroup->execute();
         }
@@ -753,7 +754,7 @@
         public function addUsertoGroup($UserID,$GroupID){
             
             $ModulID = $this->getModuleFromGroup($GroupID);
-            $this->addPermission($UserID,'ModulChapter',$ModulID,1,0,0,0);
+            $this->addPermission($UserID,'ModulChapter',$ModulID);
             $this->stmtaddUsertoGroup->bind_param("ii",$UserID,$GroupID);
             $this->stmtaddUsertoGroup->execute();
         }
@@ -778,8 +779,8 @@
             $this->stmtaddInstitutionInvitationLink->execute();
         }
         
-        public function addPermission($UserID,$Name,$ID,$canView,$canEdit,$canCreate,$canDelete){
-            $this->stmtaddPermission->bind_param("isiiiii",$UserID,$Name,$ID,$canView,$canEdit,$canCreate,$canDelete);
+        public function addPermission($UserID,$Name,$ID){
+            $this->stmtaddPermission->bind_param("isi",$UserID,$Name,$ID);
             $this->stmtaddPermission->execute();
         }
         
@@ -1823,9 +1824,9 @@
             $this->stmtrejectHandIn->execute();
         }
         
-        public function deletePermission($UserID,$Name,$ID=NULL){
-            $this->stmtdeletePermission->bind_param("isi",$UserID,$Name,$ID);
-            $this->stmtdeletePermission->execute();
+        public function deleteallPermissionsFromUser($UserID){
+            $this->stmtdeleteallPermissionsFromUser->bind_param("i",$UserID);
+            $this->stmtdeleteallPermissionsFromUser->execute();
         }
         public function deleteChapter($ID){
             $this->stmtdeleteChapter->bind_param("i",$ID);
