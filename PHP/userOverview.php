@@ -12,7 +12,7 @@
         header("Location: ../index.php");
         exit;
     }
-
+    
     //TV User Daten werden herausgesucht
     $myUser = $ODB->getUserFromID($_SESSION['user']); 
     $myGroups = $ODB->getGroupsFromUserID($_SESSION['user']);
