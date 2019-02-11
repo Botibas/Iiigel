@@ -1,4 +1,3 @@
-<!--JN- Auf diser seite Können die Userprofile daten vom admin geändert werden-->
 <?php
     ob_start();
     session_start();
@@ -45,7 +44,7 @@
 		$email = htmlspecialchars($email);
 
 		
-		if (!empty($username)) {<!--JN- Begin fehler beim speichern-->
+		if (!empty($username)) {
             if (strlen($username)<3) {
                 $error = true;
                 $usernameError = "Ihr Benutzername muss länger als 3 Zeichen sein";
@@ -79,7 +78,7 @@
                     $error = true;
                     $emailError = "Ihre angegebene E-Mail ist bereits vergeben.";
                 }
-            }<!--JN- Ende fehler beim speichern-->
+            }
         }
         
         if( !$error ) {
@@ -139,14 +138,14 @@
 								<label for="exampleInputFile" class="label noPadding"><span class="glyphicon glyphicon-picture" aria-hidden="true"></span> Profilbild hochladen</label>
 								<form action="upload.php" method="post" enctype="multipart/form-data">
 									<!--<input type="hidden" name="MAX_FILE_SIZE" value="800000" />-->
-									<input type="file" name="datei" value="Hochladen" id="exampleInputFile" style="float:left;"><!--JN- Datei auswählen button-->
-									<button id="Hochladen" type="submit" class="btn btn-default" name="Hochladen">Hochladen</button><!--JN -Profilbild Hochladen button-->
+									<input type="file" name="datei" value="Hochladen" id="exampleInputFile" style="float:left;">
+									<button id="Hochladen" type="submit" class="btn btn-default" name="Hochladen">Hochladen</button>
 								</form>
 							</div>
 						</div>
 
 						<div class="col-md-2 noPadding">
-							<button id="PasswortButton" class="btn btn-default"><span class="glyphicon glyphicon-pencil"></span> Passwort ändern</button><!--JN - Passwort ändern button auf der seite-->
+							<button id="PasswortButton" class="btn btn-default"><span class="glyphicon glyphicon-pencil"></span> Passwort ändern</button>
 						</div>
 					</div>
 
@@ -155,12 +154,12 @@
 							<div class="col-md-6 noPadding">
 								<div class="form-group">
 									<label for="exampleInputPrename">Vorname</label>
-									<input type="text" name="vorname" class="form-control form" value="<?php if(isset($vorname))  echo $vorname; ?>" placeholder="<?php echo $myUser->getsFirstName(); ?>"><!--JN- Eingabe Vorname-->
+									<input type="text" name="vorname" class="form-control form" value="<?php if(isset($vorname))  echo $vorname; ?>" placeholder="<?php echo $myUser->getsFirstName(); ?>">
 									<span class="text-danger"><?php if(isset($vornameError)) echo $vornameError; ?> </span>
 								</div>
 								<div class="form-group">
 									<label for="exampleInputLastname">Nachname</label>
-									<input type="text" name="nachname" class="form-control form" placeholder="<?php echo $myUser->getsLastName(); ?>" value="<?php if(isset($nachname)) echo $nachname; ?>"><!--JN- Eingabe nachname-->
+									<input type="text" name="nachname" class="form-control form" placeholder="<?php echo $myUser->getsLastName(); ?>" value="<?php if(isset($nachname)) echo $nachname; ?>">
 									<span class="text-danger"><?php if(isset($nachnameError)) echo $nachnameError; ?> </span>
 								</div>
 
@@ -185,14 +184,14 @@
 						<div id="" class="row">
 							<div class="col-md-2 noPadding">
 
-								<button id="PinkButton" type="submit" class="btn btn-block btn-primary pinkButton" name="btn-save">Speichern</button><!--JN- Userdaten Speichern Button (speichern)-->
+								<button id="PinkButton" type="submit" class="btn btn-block btn-primary pinkButton" name="btn-save">Speichern</button>
 							</div>
 
 
 					</form>
 					<div class="col-md-2">
 						<form action="../PHP/AdminUserView.php">
-							<button id="Button" type="submit" class="btn btn-default">Zurück</button><!--JN- zurück button führt zur AdminUserView.php-->
+							<button id="Button" type="submit" class="btn btn-default">Zurück</button>
 						</form>
 					</div>
 

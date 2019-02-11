@@ -41,15 +41,6 @@
                     }
                 }
         }
-        if(isset($_POST['DeleteUserdb'])){ 
-                 echo Hallo;
-                 for ($i=0; $i< sizeof($allUsers);$i++){  
-                    if($allUsers[$i]->getID() ==  $_POST['DeleteUserdb']) {
-                        $ODB->deleteUserdb($allUsers[$i]->getID());
-                        header("Refresh:0");     
-                    }
-                }
-        }
     }
 
     $toAdd = "";

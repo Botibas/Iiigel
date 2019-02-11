@@ -37,7 +37,7 @@
     $chapterText = $ODB->getChapterFromID($myChapterID)->getsText();                                            //Zwischenspeicherung vom Kapiteltext aus der DB
     $headline = substr($chapterText,((-1)*(strlen($chapterText)))+11,(strpos($chapterText,"[/headline]")-11));  //Titel wird aus dem Kapiteltext mit Stringoperatoren gezogen
     $headline = substr($headline,(strpos($headline,'-'))-strlen($headline)+2);                                  //Titel wird aus dem Kapiteltext mit Stringoperatoren gezogen
-    $ODB->setChapterHeadlineFromId($headline,$myChapterID);                                                     //Titel wird in die DB gespeichert
+    //$ODB->setChapterHeadlineFromId($headline,$myChapterID); ---Hat Kapuut gemacht--                                                    //Titel wird in die DB gespeichert
     $myPage = str_replace("%ChapterTextRaw%",$chapterText,$myPage);                                             //Kapiteltext wird in Seite eingefügt
     $chapterText = $ODB->replaceTags($chapterText);                                                             //Kapiteltext wird nach den gesetzten Tags bearbeitet mit originalen HTML-Tags ersetzt
     $text = '<div class="chapterView col-md-12">  '.$chapterText.'</div>';
