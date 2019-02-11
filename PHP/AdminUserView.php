@@ -32,7 +32,16 @@
 		
         }
          
-		if(isset($_POST['DeleteUser'])){ 
+		if(isset($_POST['deactivateUser'])){ 
+                 echo Hallo;
+                 for ($i=0; $i< sizeof($allUsers);$i++){  
+                    if($allUsers[$i]->getID() ==  $_POST['deactivateUser']) {
+                        $ODB->deactivateUser($allUsers[$i]->getID());
+                        header("Refresh:0");     
+                    }
+                }
+        }
+        if(isset($_POST['DeleteUser'])){ 
                  echo Hallo;
                  for ($i=0; $i< sizeof($allUsers);$i++){  
                     if($allUsers[$i]->getID() ==  $_POST['DeleteUser']) {

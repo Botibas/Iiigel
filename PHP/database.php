@@ -154,6 +154,7 @@
         
         //------------------------------------------------
         
+        private $stmtdeactivateUser;
         private $stmtdeleteUser;
         private $stmtdeletGroupsRegistrationLinks;
         private $stmtdeleteChapter;
@@ -320,7 +321,12 @@
             
             //------------------------------------------------------- DELETES ------------------------------------------------------------------
             
-            $this->stmtdeleteUser = $this->db_connection->prepare("UPDATE users SET bIsDeleted = 1 WHERE ID = ?");
+            $this->stmtdeactivateUser = $this->db_connection->prepare("UPDATE users SET bIsDeleted = 1 WHERE ID = ?");
+            $this->stmtdeleteUserUsers = $this->db_connection->prepare("DELETE FROM users WHERE ID = ?");
+            $this->stmtdeleteUserHandins = $this->db_connection->prepare("DELETE FROM handins WHERE UserID = ?");
+            $this->stmtdeleteUserRights = $this->db_connection->prepare("DELETE FROM rights WHERE UserID = ?");
+            $this->stmtdeleteUserUsertogroup = $this->db_connection->prepare("DELETE FROM usertogroup WHERE UserID = ?");
+            $this->stmtdeleteUserUsertoinstitution = $this->db_connection->prepare("DELETE FROM usertoinstitution WHERE UserID = ?");
             $this->stmtdeletGroupsRegistrationLinks = $this->db_connection->prepare("DELETE FROM `registrationlinkgroup` WHERE DATE(`EndDatum`) < DATE(NOW())");
             $this->stmtrejectHandIn = $this->db_connection->prepare("UPDATE handins SET isRejected = 1 WHERE UserID = ? AND GroupID = ? AND ChapterID = ? AND ID = ?");
             $this->stmtdeletePermission = $this->db_connection->prepare("UPDATE rights SET isDeleted=1 WHERE UserID = ? AND Name = ? AND ID = ?");
@@ -1813,9 +1819,21 @@
         
         //------------------------------------------------------- DELETE ------------------------------------------------------------------------
         
+        public function deactivate($ID){
+            $this->stmtdeactivateUser->bind_param("i",$ID);
+            $this->stmtdeactivateUser->execute();
+        }
         public function deleteUser($ID){
-            $this->stmtdeleteUser->bind_param("i",$ID);
-            $this->stmtdeleteUser->execute();
+            $this->stmtdeleteUserUsers->bind_param("i",$ID);
+            $this->stmtdeleteUserUsers->execute();
+            $this->stmtdeleteUserHandins->bind_param("i",$ID);
+            $this->stmtdeleteUserHandins->execute();
+            $this->stmtdeleteUserRights->bind_param("i",$ID);
+            $this->stmtdeleteUserRights->execute();
+            $this->stmtdeleteUserUsertogroup->bind_param("i",$ID);
+            $this->stmtdeleteUserUsertogroup->execute();
+            $this->stmtdeleteUserUsertoinstitution->bind_param("i",$ID);
+            $this->stmtdeleteUserUsertoinstitution->execute();
         }
         function deletGroupsRegistrationLinks(){
             $this->stmtdeletGroupsRegistrationLinks->execute();
