@@ -155,6 +155,7 @@
         //------------------------------------------------
         
         private $stmtdeleteUser;
+        private $stmtdeletGroupsRegistrationLinks;
         private $stmtdeleteChapter;
         private $stmtrejectHandIn;
         private $stmtdeletePermission;
@@ -320,6 +321,7 @@
             //------------------------------------------------------- DELETES ------------------------------------------------------------------
             
             $this->stmtdeleteUser = $this->db_connection->prepare("UPDATE users SET bIsDeleted = 1 WHERE ID = ?");
+            $this->stmtdeletGroupsRegistrationLinks = $this->db_connection->prepare("DELETE FROM `registrationlinkgroup` WHERE DATE(`EndDatum`) < DATE(NOW())");
             $this->stmtrejectHandIn = $this->db_connection->prepare("UPDATE handins SET isRejected = 1 WHERE UserID = ? AND GroupID = ? AND ChapterID = ? AND ID = ?");
             $this->stmtdeletePermission = $this->db_connection->prepare("UPDATE rights SET isDeleted=1 WHERE UserID = ? AND Name = ? AND ID = ?");
             $this->stmtdeleteChapter = $this->db_connection->prepare("UPDATE chapters SET bIsDeleted = 1 WHERE ID= ?");
@@ -1815,7 +1817,9 @@
             $this->stmtdeleteUser->bind_param("i",$ID);
             $this->stmtdeleteUser->execute();
         }
-        
+        function deletGroupsRegistrationLinks(){
+            $this->stmtdeletGroupsRegistrationLinks->execute();
+        }
         public function rejectHandIn($UserID,$GroupID,$ID){
             $Fortschritt = $this->getFortschritt($UserID,$GroupID);
             $ModulID = $this->getModuleFromGroup($GroupID);
