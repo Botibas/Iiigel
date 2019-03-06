@@ -203,7 +203,7 @@
             $this->stmtisGroupLinkgueltig = $this->db_connection->prepare("SELECT * FROM registrationlinkgroup WHERE Link = ? AND CURRENT_DATE() BETWEEN StartDatum AND EndDatum");
             $this->stmtisInstitutionLinkgueltig = $this->db_connection->prepare("SELECT * FROM registrationlinkinstitution WHERE Link = ? AND StartDatum >= CURDATE() AND EndDatum <= CURDATE()");
             $this->stmtisUserDeleted = $this->db_connection->prepare("SELECT * FROM users WHERE ID = ? AND bIsDeleted = 1");
-            $this->stmtisAdmin = $this->db_connection->prepare("SELECT * FROM rights WHERE UserID = ? AND Name = 'Admin' AND isDeleted = 0");
+            $this->stmtisAdmin = $this->db_connection->prepare("SELECT * FROM rights WHERE UserID = ? AND Name = 'Globaladmin' AND isDeleted = 0");
             $this->stmtisEditor = $this->db_connection->prepare("SELECT * FROM rights WHERE UserID = ? AND Name = 'canEdit' AND isDeleted = 0");
             $this->stmtisInstitutionsLeader = $this->db_connection->prepare("SELECT * FROM usertoinstitution WHERE UserID = ? AND bIsInstitutionleader = 1");
             $this->stmtisGroupLinkTaken = $this->db_connection->prepare("SELECT * FROM registrationlinkgroup WHERE Link = ? AND CURRENT_DATE() BETWEEN StartDatum AND EndDatum");
@@ -1170,7 +1170,7 @@
         public function getPermissionsFromUser($UserID){
             
             if($this->isAdmin($UserID)){
-                return "Admin"; 
+                return "Globaladmin"; 
             }else if($this->isEditor($UserID)){
                 return "Editor";
             }else{
