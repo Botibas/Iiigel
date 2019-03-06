@@ -1819,7 +1819,7 @@
         
         //------------------------------------------------------- DELETE ------------------------------------------------------------------------
         
-        public function deactivate($ID){
+        public function deactivateUser($ID){
             $this->stmtdeactivateUser->bind_param("i",$ID);
             $this->stmtdeactivateUser->execute();
         }
