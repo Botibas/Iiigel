@@ -345,17 +345,20 @@
             //------------------------------------------------------- DELETES ------------------------------------------------------------------
             
             $this->stmtdeactivateUser = $this->db_connection->prepare("UPDATE users SET bIsDeleted = 1 WHERE ID = ?");
+            $this->stmtrejectHandIn = $this->db_connection->prepare("UPDATE handins SET isRejected = 1 WHERE UserID = ? AND GroupID = ? AND ChapterID = ? AND ID = ?");
+            $this->stmtdeletePermission = $this->db_connection->prepare("UPDATE rights SET isDeleted=1 WHERE UserID = ? AND Name = ? AND ID = ?");
+            $this->stmtdeleteChapter = $this->db_connection->prepare("UPDATE chapters SET bIsDeleted = 1 WHERE ID= ?");
+        
+
+            //------------------------------------------------------- DELETES DB ------------------------------------------------------------------
             $this->stmtdeleteUserUsers = $this->db_connection->prepare("DELETE FROM users WHERE ID = ?");
             $this->stmtdeleteUserHandins = $this->db_connection->prepare("DELETE FROM handins WHERE UserID = ?");
             $this->stmtdeleteUserRights = $this->db_connection->prepare("DELETE FROM rights WHERE UserID = ?");
             $this->stmtdeleteUserUsertogroup = $this->db_connection->prepare("DELETE FROM usertogroup WHERE UserID = ?");
             $this->stmtdeleteUserUsertoinstitution = $this->db_connection->prepare("DELETE FROM usertoinstitution WHERE UserID = ?");
             $this->stmtdeletGroupsRegistrationLinks = $this->db_connection->prepare("DELETE FROM `registrationlinkgroup` WHERE DATE(`EndDatum`) < DATE(NOW())");
-            $this->stmtrejectHandIn = $this->db_connection->prepare("UPDATE handins SET isRejected = 1 WHERE UserID = ? AND GroupID = ? AND ChapterID = ? AND ID = ?");
-            $this->stmtdeletePermission = $this->db_connection->prepare("UPDATE rights SET isDeleted=1 WHERE UserID = ? AND Name = ? AND ID = ?");
-            $this->stmtdeleteChapter = $this->db_connection->prepare("UPDATE chapters SET bIsDeleted = 1 WHERE ID= ?");
         }
-        
+                
         
         
         
