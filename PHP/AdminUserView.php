@@ -31,13 +31,12 @@
 			$searchUsers = $ODB ->searchUsers("%".$userSearch."%");
 		
         }
-         
 		if(isset($_POST['deactivateUser'])){ 
                  echo Hallo;
                  for ($i=0; $i< sizeof($allUsers);$i++){  
                     if($allUsers[$i]->getID() ==  $_POST['deactivateUser']) {
                         $ODB->deactivateUser($allUsers[$i]->getID());
-                        header("Refresh:0");     
+                        header("Refresh:0");
                     }
                 }
         }
@@ -46,7 +45,7 @@
                  for ($i=0; $i< sizeof($allUsers);$i++){  
                     if($allUsers[$i]->getID() ==  $_POST['DeleteUser']) {
                         $ODB->deleteUser($allUsers[$i]->getID());
-                        header("Refresh:0");     
+                        header("Refresh:0");
                     }
                 }
         }

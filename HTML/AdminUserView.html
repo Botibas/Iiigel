@@ -15,7 +15,6 @@
 </head>
 
 <body>
-
 	<div id="WrappingContainer" class="container">
 
 		<div id="Container" class="row">
@@ -60,7 +59,6 @@
 			</div>
 
 		</div>
-        
         	<div id="myModal" class="modal fade" role="dialog">
 				<div class="modal-dialog">
 
@@ -77,7 +75,7 @@
 									<div class="col-md-12">
 										<div class="panel-body">
 											<formgroup>
-                                                <p>Wollen Sie wirklich diesen Nutzer löschen?</p>
+                                                <p>Wollen Sie wirklich diesen Nutzer löschen oder Deaktiviren?</p>
 											</formgroup>
 
 										</div>
@@ -87,13 +85,10 @@
 
 						</div>
 						<div class="modal-footer">
-							<button name="DeactivateUser" type="button" class="btn btn-default" data-dismiss="modal" value="156" onclick="commitChanges()" style="background-color:#e31465; color:#FFFFFF;">Deaktiviren</button>
-                            </div>
-                        <div class="modal-footer">
+							<button name="DeactivateUser" type="button" class="btn btn-default" data-dismiss="modal" value="%id%" onclick="commitChanges();" style="background-color:#e31465; color:#FFFFFF;">Deaktiviren</button>
 							<button name="DeleteUser" type="button" class="btn btn-default" data-dismiss="modal" value="%id%" onclick="commitChanges()" style="background-color:#e31465; color:#FFFFFF;">Löschen</button>
 						</div>
 					</div>
-
 				</div>
 			</div>
 
