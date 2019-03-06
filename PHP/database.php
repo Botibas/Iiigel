@@ -1908,7 +1908,8 @@
                 }    
         }
         
-        public function updateCompletePermission($newUserID,$newName,$newID,$newcanView,$newcanEdit,$newcanCreate,$newcanDelete,$UserID,$Name,$ID,$canView,$canEdit,$canCreate,$canDelete){
+        public function updateCompletePermission($newUserID,$newName,$newID,$newcanView,$newcanEdit,$newcanCreate,$newcanDelete,$UserID,$Name,$ID,$canView,$canEdit,$canCreate,$canDelete)
+        {
             $this->stmtUpdateCompletePermission->bind_param("isiiiiiisiiiii",$newUserID,$newName,$newID,$newcanView,$newcanEdit,$newcanCreate,$newcanDelete,$UserID,$Name,$ID,$canView,$canEdit,$canCreate,$canDelete);
            return $this->stmtUpdateCompletePermission->execute();
         }
