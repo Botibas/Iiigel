@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	
+	<link rel="stylesheet" href="../bootstrap-3.3.7-dist\bootstrap-3.3.7-dist\css\bootstrap.min.css" type="text/css">
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	
+	<link rel="stylesheet" href="../Styles\AdminGivePermission.css" type="text/css">
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<!-- Schrift -->
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+
+<body class="body">
+
+	<div id="WrappingContainer" class="container">
+
+		<div id="Container" class="row">
+          <div id="header">
+			<div class="col-md-9 col-xs-12 noPadding">
+				<h1 id="ModulHeading">Rechte Gruppen</h1>
+			</div>
+              <div class="col-md-12">
+			    %Navigation%
+              </div>
+          </div>
+		</div>
+        
+       
+
+		<div id="OverviewContainer" class="row">
+
+			<div class="col-md-12 noPadding">
+
+				
+
+			<table id="Table" class="table">
+					<thead>
+						<tr>
+							<th>Name</th>
+							<th>canView</th>
+							<th>canEdit</th>
+							<th>canEditModul</th>
+							<th>canCreateModul</th>
+							<th>canCreateGroup</th>
+							<th>ID</th>
+						</tr>
+					</thead>
+
+
+
+					<tbody>
+						%PermissionTable%
+					</tbody>
+				</table>
+			</div>
+
+			<!-- Modal -->
+			<div id="myModal" class="modal fade" role="dialog">
+				<div class="modal-dialog">
+
+					<!-- Modal content-->
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal">&times;</button>
+							<h4 class="modal-title">Berechtigung</h4>
+						</div>
+						<div class="modal-body">
+
+							<div class="container">
+								<div class="row">
+									<div class="col-md-12">
+										<div class="panel-body">
+											<formgroup>
+
+
+
+
+												<select id="User" class="btn btn-default dropdown-toggle addForm" name="UserID">
+													%AllUserDropdownData%
+				    								<span class="caret"></span>
+												</select>
+
+												<input id="Berechtigung" type="text">
+												<input id="id" type="text">
+												<input id="CanView" type="checkbox" value="">
+												<input id="CanEdit" type="checkbox" value="">
+												<input id="CanAdd" type="checkbox" value="">
+												<input id="CanDelete" type="checkbox" value="">
+
+												<input id="oldBerechtigung" type="hidden" value="">
+												<input id="oldid" type="hidden" value="">
+												<input id="oldCanView" type="hidden" value="">
+												<input id="oldCanEdit" type="hidden" value="">
+												<input id="oldCanAdd" type="hidden" value="">
+												<input id="oldCanDelete" type="hidden" value="">
+												<input id="oldUser" type="hidden" value="">
+											</formgroup>
+
+										</div>
+									</div>
+								</div>
+							</div>
+
+						</div>
+						<div class="modal-footer">
+							<form action="post"><button id="RejectBtn" type="button" class="btn btn-default" data-dismiss="modal" value="" onclick="rejectHandIn(this)">Ablehnen</button></form>
+							<button id="ModalBtn" type="button" class="btn btn-default" data-dismiss="modal" value="" onclick="commitChanges()">Annehmen</button>
+						</div>
+					</div>
+
+				</div>
+			</div>
+
+		</div>
+
+	</div>
+
+</body>
+<script>
+	function inttobool(i) {
+		if (i == 1) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	function booltoint(i) {
+		if (i == true) {
+			return 1;
+		} else {
+			return 0;
+		}
+	}
+
+
+	function commitChanges() {
+
+		$.ajax({
+			url: "commitPermissionChanges.php?" + "newUserID=" + document.getElementById("User").value + "&newName=" + document.getElementById("Berechtigung").value + "&newID=" + document.getElementById("id").value + "&newcanView=" + document.getElementById("CanView").checked + "&newcanEdit=" + document.getElementById("CanEdit").checked + "&newcanCreate=" + document.getElementById("CanAdd").checkend + "&newcanDelete=" + document.getElementById("CanDelete").checked + "&UserID=" + document.getElementById("oldUser").value + "&Name=" + document.getElementById("oldUser").value + "&ID=" + document.getElementById("oldid").value + "&canView=" + booltoint(document.getElementById("oldCanView").value) + "&canEdit=" + booltoint(document.getElementById("oldCanEdit").value) + "&canCreate=" + booltoint(document.getElementById("oldCanAdd").value) + "&canDelete=" + booltoint(document.getElementById("oldCanDelete").value),
+			success: function(data) {
+
+			},
+		});
+
+
+	}
+
+	function openModal(data) {
+
+		$('#myModal').modal('show');
+		console.log(data);
+
+		document.getElementById("User").value = data["UserId"];
+		document.getElementById("oldUser").value = data["UserId"];
+
+		document.getElementById("Berechtigung").value = data["Permission"];
+		document.getElementById("oldBerechtigung").value = data["Permission"];
+
+		document.getElementById("id").value = data["ID"];
+		document.getElementById("oldid").value = data["ID"];
+
+		document.getElementById("CanView").checked = inttobool(data["CanView"]);
+		document.getElementById("oldCanView").value = data["CanView"];
+
+		document.getElementById("CanEdit").checked = inttobool(data["CanEdit"]);
+		document.getElementById("oldCanEdit").value = data["CanEdit"];
+
+		document.getElementById("CanAdd").checkend = inttobool(data["CanAdd"]);
+		document.getElementById("oldCanAdd").value = data["CanAdd"];
+
+		document.getElementById("CanDelete").checked = inttobool(data["CanDelete"]);
+		document.getElementById("oldCanDelete").value = data["CanDelete"];
+	}
+
+</script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+</html>

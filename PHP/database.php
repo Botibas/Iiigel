@@ -111,7 +111,16 @@
         private $stmtCountAllChaptersFromModuleID;
         private $stmtCountAllInstitutionsFromLeader;
         
-        //--------------------------------------------------
+        //----------------RightGroups----------------------------------
+        private $stmtGetPermissionGroupByID;
+        private $stmtGetLengthOfPermissionGroupTable;
+        private $stmtRightGroupHasPermissionToView;
+        private $stmtRightGroupHasPermissionToEdit;
+        private $stmtRightGroupHasPermissionToEditModul;
+        private $stmtRightGroupHasPermissionToCreateModul;
+        private $stmtRightGroupHasPermissionToCreateGroup;
+        private $stmtGetIDofPermissionGroup;
+        //-------------------------------------------------
         
         private $stmtSetProfilePic;
         private $stmtSetFortschrittFromUserinGroup;
@@ -194,7 +203,7 @@
             $this->stmtisGroupLinkgueltig = $this->db_connection->prepare("SELECT * FROM registrationlinkgroup WHERE Link = ? AND CURRENT_DATE() BETWEEN StartDatum AND EndDatum");
             $this->stmtisInstitutionLinkgueltig = $this->db_connection->prepare("SELECT * FROM registrationlinkinstitution WHERE Link = ? AND StartDatum >= CURDATE() AND EndDatum <= CURDATE()");
             $this->stmtisUserDeleted = $this->db_connection->prepare("SELECT * FROM users WHERE ID = ? AND bIsDeleted = 1");
-            $this->stmtisAdmin = $this->db_connection->prepare("SELECT * FROM rights WHERE UserID = ? AND Name = 'Admin' AND isDeleted = 0");
+            $this->stmtisAdmin = $this->db_connection->prepare("SELECT * FROM rights WHERE UserID = ? AND Name = 'Globaladmin' AND isDeleted = 0");
             $this->stmtisEditor = $this->db_connection->prepare("SELECT * FROM rights WHERE UserID = ? AND Name = 'canEdit' AND isDeleted = 0");
             $this->stmtisInstitutionsLeader = $this->db_connection->prepare("SELECT * FROM usertoinstitution WHERE UserID = ? AND bIsInstitutionleader = 1");
             $this->stmtisGroupLinkTaken = $this->db_connection->prepare("SELECT * FROM registrationlinkgroup WHERE Link = ? AND CURRENT_DATE() BETWEEN StartDatum AND EndDatum");
@@ -226,6 +235,20 @@
             $this->stmtGetModuleFromGroup = $this->db_connection->prepare("SELECT ModulID From groups WHERE ID = ?");
             $this->stmtGetChapterIDFromIndex = $this->db_connection->prepare("SELECT ID FROM chapters WHERE iIndex = ? AND ModulID = ? AND bIsDeleted = 0");
             $this->stmtGetIndexFromID = $this->db_connection->prepare("SELECT iIndex FROM chapters WHERE ID = ?");
+            
+             //-----------------------------------------------------RightGroups ----------------------------------------------
+            
+            $this->stmtGetPermissionGroupByID = $this->db_connection->prepare("SELECT name FROM rightgroups WHERE ID = ?");
+            $this->stmtGetLengthOfPermissionGroupTable = $this->db_connection->prepare("SELECT MAX(ID)
+            FROM rights;");
+            $this->stmtRightGroupHasPermissionToView = $this->db_connection->prepare("SELECT canView FROM rightgroups WHERE ID = ?");
+            $this->stmtRightGroupHasPermissionToEdit = $this->db_connection->prepare("SELECT canEdit FROM rightgroups WHERE ID = ?");
+            $this->stmtRightGroupHasPermissionToEditModul = $this->db_connection->prepare("SELECT canEditModul FROM rightgroups WHERE ID = ?");
+            $this->stmtRightGroupHasPermissionToCreateModul = $this->db_connection->prepare("SELECT canCreateModul FROM rightgroups WHERE ID = ?");
+            $this->stmtRightGroupHasPermissionToCreateGroup = $this->db_connection->prepare("SELECT canCreateGroup FROM rightgroups WHERE ID = ?");
+            $this->stmtGetIDofPermissionGroup = $this->db_connection->prepare("SELECT ID FROM rightgroups WHERE name = ?");
+            
+            //--------------------------------------------------------- UPDATES -----------------------------------------------
             
             //------------------------------------------------------- COUNT ---------------------------------------------------------------------
             
@@ -1147,7 +1170,7 @@
         public function getPermissionsFromUser($UserID){
             
             if($this->isAdmin($UserID)){
-                return "Admin"; 
+                return "Globaladmin"; 
             }else if($this->isEditor($UserID)){
                 return "Editor";
             }else{
@@ -1327,6 +1350,79 @@
             $res = $this->stmtGetPermissionNames->get_result();
             
             return $res;
+        }
+        
+        //------------------------RightGroups---TV-----------------------------------------------
+        
+        /*public function getLengthOfPermissionGroupTable(){
+            $this->stmtGetLengthOfPermissionGroupTable->execute();
+            $res = $this->stmtGetLengthOfPermissionGroupTable->get_result();
+           
+        }*/
+        public function GetIDofPermissionGroup($RightGroupName){
+            $this->stmtGetIDofPermissionGroup->bind_param("s",$RightGroupName);
+            $this->stmtGetIDofPermissionGroup->execute();
+            $res = $this->stmtGetIDofPermissionGroup->get_result();
+            if (mysqli_num_rows($res) == 1){
+                $row = mysqli_fetch_array($res);
+                return $row['ID'];
+            } else {
+              throw new exception('Keine RightGroup oder mehrere RightGroups mit dieser ID');  
+            }
+        }
+        public function RightGroupHasPermission($RightGroupID,$whichPermission){
+            $test="mom";
+            if ($test == "Globaladmin"){
+               return true;
+           } else {
+                switch ($whichPermission) {
+                    case "canView":
+                        $toExecute = $this->stmtRightGroupHasPermissionToView;
+                        break;
+                    case "canEdit":
+                        $toExecute = $this->stmtRightGroupHasPermissionToEdit;
+                        break;
+                    case "canEditModul":
+                        $toExecute = $this->stmtRightGroupHasPermissionToEditModul;
+                        break;
+                    case "canCreateModul":
+                        $toExecute = $this->stmtRightGroupHasPermissionToCreateModul;
+                        break;
+                    case "canCreateGroup":
+                        $toExecute = $this->stmtRightGroupHasPermissionToCreateGroup;
+                        break;
+                    default:
+                       throw new Exception('Nur canView, canEdit, canEditModul, canCreateModul oder canCreateGroup als Parameter für whichPermission erlaubt.');
+                       return false;
+                } 
+			
+
+                if (isset($toExecute)){
+                    $toExecute->bind_param("i",$RightGroupID);
+                    $toExecute->execute();
+                    $res = $toExecute->get_result();
+                    
+                    if (mysqli_num_rows($res) == 1){
+                        $row = mysqli_fetch_array($res);
+                        return $row[$whichPermission];
+                    } else {
+                        throw new exception('Kein Right oder mehrere Rights mit dieser ID');  
+                    }
+                }
+           }
+            
+        }
+        
+        public function getPermissionGroupByID($ID){
+            $this->stmtGetPermissionGroupByID->bind_param("i",$ID);
+            $this->stmtGetPermissionGroupByID->execute();
+            $res = $this->stmtGetPermissionGroupByID->get_result();
+            if (mysqli_num_rows($res) == 1){
+                $row = mysqli_fetch_array($res);
+                return $row['name'];
+            } else {
+              throw new exception('Keine Gruppe oder mehrere Gruppen mit dieser ID');  
+            }
         }
         
         // ---------------- COUNT -------------------------

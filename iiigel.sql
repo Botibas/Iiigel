@@ -408,6 +408,37 @@ INSERT INTO `rights` (`UserID`, `Name`, `ID`, `canView`, `canEdit`, `canCreate`,
 
 -- --------------------------------------------------------
 
+
+--
+-- Tabellenstruktur für Tabelle `rightgroups`
+--
+
+CREATE TABLE `rightgroups` (
+  `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
+  `canView` tinyint(1) DEFAULT NULL,
+  `canEdit` tinyint(1) DEFAULT NULL,
+  `canEditModul` tinyint(1) DEFAULT NULL,
+  `canCreateModul` tinyint(1) DEFAULT NULL,
+  `canCreateGroup` tinyint(1) DEFAULT NULL,
+  `ID` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Daten für Tabelle `rightgroups`
+--
+
+INSERT INTO `rightgroups` (`name`, `canView`, `canEdit`, `canEditModul`, `canCreateModul`, `canCreateGroup`, `ID`) VALUES
+('Globaladmin', 1, 1, 1, 1, 1, 0),
+('Institutionsadmin', 1, 1, 1, 0, 1, 1),
+('GlobalEditor', 1, 1, 1, 0, 0, 2),
+('ModulEditor', 1, 0, 1, 0, 0, 3),
+('TrainerAndEditor', 1, 1, 1, 0, 1, 4),
+('TN', 1, 0, 0, 0, 0, 5),
+('Trainer', 1, 0, 0, 0, 1, 6);
+
+-- ------------------------------------------------------------------
+
+
 --
 -- Tabellenstruktur für Tabelle `transcribedtags`
 --
