@@ -55,8 +55,9 @@ if(!($ODB->hasPermission($_SESSION['user'],"Chapter","view",$myModule->chapter[$
     $myUser = $ODB->getUserFromId($myUserID);
     $myGroups = $ODB->getGroupsFromUserID($_SESSION['user']);
     $activeGroup = $ODB->getGroupFromID($currentGroupID);
-    $currentProgress =$activeGroup->getProgressFromUserID($_SESSION['user']);
-   
+    $currentProgress = $activeGroup->getProgressFromUserID($_SESSION['user']);
+    
+    
     if ( isset($_POST['NextButton']) ) {//AL Wenn auf den 'nächstes Kapitel' Button gedrückt wird
        
  
@@ -68,15 +69,32 @@ if(!($ODB->hasPermission($_SESSION['user'],"Chapter","view",$myModule->chapter[$
 
     if ( isset($_POST['AbgabeButton'])){//AL Wenn auf den 'Abgabe' Button gedrückt wird
         $ODB->addHandIn($myUserID,$activeGroup->getID(),$myChapterIDp,$_POST['modalData']); //AL In der Datenbank wird ein neues HandIn erstellt
+        $myUsers = $ODB->getUsersFromGroup($currentGroupID);//AL Nimm alle Nutzer
+        for ($i=0; $i< sizeof($myUsers);$i++){
+            if($ODB->isTrainerofGroup($myUsers[$i]->getID(),$currentGroupID) == true){
+                if($myUsers[$i]->getsEMail() != ""){//AL Wenn der Trainer eine Mailadresse hinterlegt hat 
+                $empfaenger = $myUsers[$i]->getsEMail();
+                $sender = "Abgabe@Iiigel.de";
+                $betreff = "Abgabe im Projekt". $activeGroup->getsName();
+                $text = "Einer Deiner Teilnehmer hat eine Abgabe eingereicht. Bitte besuche Iiigel.com und schaue sie dir an.";
+                mail($empfaenger, $betreff, $text, $sender);
+                }else{
+                    echo "<script>alert('Dein Trainer hat leider keine E-Mail hinterlegt. Bitte deinen Trainer darum dies zu tuen, damit er in Zukunft schneller auf deine Fragen antworten kann.');</script>";
+                }
+            }
+        }
+        
+        
+
     }
     if ( isset($_POST['EditChapterButton'])){//AL Wenn der Trainer auf den Button für das bearbeiten dieses Kapitels drückt
         
-        
-        header("Location: ../PHP/chapterEditor.php?moduleID=".$myModuleID."&chapterID=".($realChapterID+1));
+        $realChapterID = $realChapterID + 1;
+        header("Location: ../PHP/chapterEditor.php?moduleID=".$myModuleID."&chapterID=".$realChapterID."&groupID=".$currentGroupID."&formerChapterID=".$realChapterID);
     }
     //if(($ODB->isTrainerofGroup($myUserID,$currentGroupID)) and (($GLOBALS["ODB"]->isAdmin($_SESSION['user'])))) { AL UNBENUTZT
 
-    if($ODB->isTrainerofGroup($myUserID,$currentGroupID)) {
+    if($ODB->isTrainerofGroup($myUserID,$currentGroupID)){
         $toAdd = file_get_contents('../HTML/ChapterViewTrainerChapterToggle.html');//AL erstellt den Trainer Button
         $search = array('%Toggle%');
         $replace = array($toAdd);
@@ -86,7 +104,7 @@ if(!($ODB->hasPermission($_SESSION['user'],"Chapter","view",$myModule->chapter[$
         $search = array('%Toggle2%');
         $replace = array($toAdd);
         $myPage = str_replace($search,$replace,$myPage);
-    }else {//AL Erstelle keine Buttons
+    }else{//AL Erstelle keine Buttons
         $toAdd = "";
         $search = array('%Toggle%');
         $replace = array($toAdd);

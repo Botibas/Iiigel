@@ -10,6 +10,12 @@
     $myModuleID = $_GET['moduleID'];                                                                            //Zwischenspeicherung von ModuleID
     $myChapterID = $_GET['chapterID'];                                                                          //Zwischenspeicherung von ChapterID
 	$myChapterID = $myChapterID;
+    //$formerChapterID = ($ODB->getChapterIDFromIndex($myChapterID + 1,$myModuleID) - 1);
+    if(isset($_GET['groupID'])){//AL Wenn man über den "Hier editieren"-Button gekommen ist
+        $myGroupID = $_GET['groupID'];
+    }else{
+        $myGroupID = NULL;
+    }
     $myUserID = $_SESSION['user'];                                                                              //Zwischenspeicherung von UserID
     
 	 // if session is not set this will redirect to login page
@@ -25,7 +31,20 @@
 
 	
 	$myPage = str_replace('%Navigation%',getNavigation(),$myPage);                                              //Einbettung von Navigation in die Seite per getNavigation()
-	
+    
+    if ( isset($_POST['backButton'])){//AL Wenn man zurück in das Kapitel will aus dem man kommt
+        header("Location: ../PHP/chapterView.php?moduleID=".$myModuleID."&chapterID=".($myChapterID-1)."&groupID=".$myGroupID);
+    }
+    if ($myGroupID!=NULL){
+        $toAdd = file_get_contents('../HTML/ChapterEditorBackButtonToggle.html');//AL erstellt den Trainer Button
+        $search = array('%Toggle%');
+        $replace = array($toAdd);
+        $myPage = str_replace($search,$replace,$myPage);
+    }else{
+        $search = array('%Toggle%');
+        $replace = array("");
+        $myPage = str_replace($search,$replace,$myPage);
+    }
 	if(!($ODB->hasPermission($_SESSION['user'],"Chapter","edit",$myChapterID)and($ODB->hasPermission($_SESSION['user'],"Chapter","edit",$myChapterID))) ) {
         echo "Sie haben nicht die benötigte Berechtigung um diese Seite anzusehen.";
         exit;

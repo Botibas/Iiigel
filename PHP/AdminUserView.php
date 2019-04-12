@@ -31,6 +31,7 @@
 			$searchUsers = $ODB ->searchUsers("%".$userSearch."%");
 		
         }
+         
 		if(isset($_POST['deactivateUser'])){ 
                  echo Hallo;
                  for ($i=0; $i< sizeof($allUsers);$i++){  

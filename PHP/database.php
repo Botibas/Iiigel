@@ -345,20 +345,17 @@
             //------------------------------------------------------- DELETES ------------------------------------------------------------------
             
             $this->stmtdeactivateUser = $this->db_connection->prepare("UPDATE users SET bIsDeleted = 1 WHERE ID = ?");
-            $this->stmtrejectHandIn = $this->db_connection->prepare("UPDATE handins SET isRejected = 1 WHERE UserID = ? AND GroupID = ? AND ChapterID = ? AND ID = ?");
-            $this->stmtdeletePermission = $this->db_connection->prepare("UPDATE rights SET isDeleted=1 WHERE UserID = ? AND Name = ? AND ID = ?");
-            $this->stmtdeleteChapter = $this->db_connection->prepare("UPDATE chapters SET bIsDeleted = 1 WHERE ID= ?");
-        
-
-            //------------------------------------------------------- DELETES DB ------------------------------------------------------------------
             $this->stmtdeleteUserUsers = $this->db_connection->prepare("DELETE FROM users WHERE ID = ?");
             $this->stmtdeleteUserHandins = $this->db_connection->prepare("DELETE FROM handins WHERE UserID = ?");
             $this->stmtdeleteUserRights = $this->db_connection->prepare("DELETE FROM rights WHERE UserID = ?");
             $this->stmtdeleteUserUsertogroup = $this->db_connection->prepare("DELETE FROM usertogroup WHERE UserID = ?");
             $this->stmtdeleteUserUsertoinstitution = $this->db_connection->prepare("DELETE FROM usertoinstitution WHERE UserID = ?");
             $this->stmtdeletGroupsRegistrationLinks = $this->db_connection->prepare("DELETE FROM `registrationlinkgroup` WHERE DATE(`EndDatum`) < DATE(NOW())");
+            $this->stmtrejectHandIn = $this->db_connection->prepare("UPDATE handins SET isRejected = 1 WHERE UserID = ? AND GroupID = ? AND ChapterID = ? AND ID = ?");
+            $this->stmtdeletePermission = $this->db_connection->prepare("UPDATE rights SET isDeleted=1 WHERE UserID = ? AND Name = ? AND ID = ?");
+            $this->stmtdeleteChapter = $this->db_connection->prepare("UPDATE chapters SET bIsDeleted = 1 WHERE ID= ?");
         }
-                
+        
         
         
         
@@ -1911,15 +1908,14 @@
                 }    
         }
         
-        public function updateCompletePermission($newUserID,$newName,$newID,$newcanView,$newcanEdit,$newcanCreate,$newcanDelete,$UserID,$Name,$ID,$canView,$canEdit,$canCreate,$canDelete)
-        {
+        public function updateCompletePermission($newUserID,$newName,$newID,$newcanView,$newcanEdit,$newcanCreate,$newcanDelete,$UserID,$Name,$ID,$canView,$canEdit,$canCreate,$canDelete){
             $this->stmtUpdateCompletePermission->bind_param("isiiiiiisiiiii",$newUserID,$newName,$newID,$newcanView,$newcanEdit,$newcanCreate,$newcanDelete,$UserID,$Name,$ID,$canView,$canEdit,$canCreate,$canDelete);
            return $this->stmtUpdateCompletePermission->execute();
         }
         
         //------------------------------------------------------- DELETE ------------------------------------------------------------------------
         
-        public function deactivateUser($ID){
+        public function deactivate($ID){
             $this->stmtdeactivateUser->bind_param("i",$ID);
             $this->stmtdeactivateUser->execute();
         }

@@ -23,6 +23,8 @@
     {
         $allPermissionNames[] = $row;
     }
+    
+    $activeTab="Globaladmin";
 
 	if (isset($_GET["activeTab"])) {
 		$activeTab = $_GET["activeTab"];
