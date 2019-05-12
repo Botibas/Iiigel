@@ -11,6 +11,7 @@
     $myChapterID = $_GET['chapterID'];                                                                          //Zwischenspeicherung von ChapterID
 	$myChapterID = $myChapterID;
     //$formerChapterID = ($ODB->getChapterIDFromIndex($myChapterID + 1,$myModuleID) - 1);
+    $myUser = $ODB->getUserFromID($_SESSION['user']); 
     if(isset($_GET['groupID'])){//AL Wenn man über den "Hier editieren"-Button gekommen ist
         $myGroupID = $_GET['groupID'];
     }else{
@@ -45,39 +46,62 @@
         $replace = array("");
         $myPage = str_replace($search,$replace,$myPage);
     }
-	if(!($ODB->hasPermission($_SESSION['user'],"Chapter","edit",$myChapterID)and($ODB->hasPermission($_SESSION['user'],"Chapter","edit",$myChapterID))) ) {
-        echo "Sie haben nicht die benötigte Berechtigung um diese Seite anzusehen.";
-        exit;
-    } else {
-    //TODO-Nur user mit Berechtigungen erlaubt
-    $myModule = $ODB->getModuleFromID($myModuleID);                                                             //Zwischenspeicherung vom eigenen Modul
-    $myUser = $ODB->getUserFromId($myUserID);                                                                   //Zwischenspeicherung vom eigenen Nutzer
-    $search = array('%ChapterHeadline%','%ChapterText%','%ChapterID%','%ModuleID%','%bool%');                   //Markierung vom gesamten Kapitel
-    $chapterText = $ODB->getChapterFromID($myChapterID)->getsText();                                            //Zwischenspeicherung vom Kapiteltext aus der DB
-    $headline = substr($chapterText,((-1)*(strlen($chapterText)))+11,(strpos($chapterText,"[/headline]")-11));  //Titel wird aus dem Kapiteltext mit Stringoperatoren gezogen
-    $headline = substr($headline,(strpos($headline,'-'))-strlen($headline)+2);                                  //Titel wird aus dem Kapiteltext mit Stringoperatoren gezogen
-    //$ODB->setChapterHeadlineFromId($headline,$myChapterID); ---Hat Kapuut gemacht--                                                    //Titel wird in die DB gespeichert
-    $myPage = str_replace("%ChapterTextRaw%",$chapterText,$myPage);                                             //Kapiteltext wird in Seite eingefügt
-    $chapterText = $ODB->replaceTags($chapterText);                                                             //Kapiteltext wird nach den gesetzten Tags bearbeitet mit originalen HTML-Tags ersetzt
-    $text = '<div class="chapterView col-md-12">  '.$chapterText.'</div>';
 
-    $replace = array($myModule->getChapterHeadlineByIndex($ODB->getIndexFromChapterID($myChapterID)-1),$text,$myChapterID,$myModuleID,$bool);   //Zwischenspeicherung vom Kompletten bearbeitetem Kapitel
-    $myPage = str_replace($search,$replace,$myPage);                                                                                            //Einfügen vom Kompletten bearbeitetem Kapitel
+	if(!$ODB->UserHasPermission($_SESSION['user'],"edit")) {
+       echo "Sie haben nicht die benötigte Berechtigung um diese Seite anzusehen.";
+       exit;
+    }else {
+
+        //TODO-Nur user mit Berechtigungen erlaubt
+        $myModule = $ODB->getModuleFromID($myModuleID);                                                             //Zwischenspeicherung vom eigenen Modul
+        $myUser = $ODB->getUserFromId($myUserID);                                                                   //Zwischenspeicherung vom eigenen Nutzer
+        $search = array('%ChapterHeadline%','%ChapterText%','%ChapterID%','%ModuleID%','%bool%');                   //Markierung vom gesamten Kapitel
+        $chapterText = $ODB->getChapterFromID($myChapterID)->getsText();                                            //Zwischenspeicherung vom Kapiteltext aus der DB
+        $headline = substr($chapterText,((-1)*(strlen($chapterText)))+11,(strpos($chapterText,"[/headline]")-11));  //Titel wird aus dem Kapiteltext mit Stringoperatoren gezogen
+        $headline = substr($headline,(strpos($headline,'-'))-strlen($headline)+2);                                  //Titel wird aus dem Kapiteltext mit Stringoperatoren gezogen
+        //$ODB->setChapterHeadlineFromId($headline,$myChapterID); ---Hat Kapuut gemacht--                                                    //Titel wird in die DB gespeichert
+        $myPage = str_replace("%ChapterTextRaw%",$chapterText,$myPage);                                             //Kapiteltext wird in Seite eingefügt
+        $chapterText = $ODB->replaceTags($chapterText);                                                             //Kapiteltext wird nach den gesetzten Tags bearbeitet mit originalen HTML-Tags ersetzt
+        $text = '<div class="chapterView col-md-12">  '.$chapterText.'</div>';
+
+        $replace = array($myModule->getChapterHeadlineByIndex($ODB->getIndexFromChapterID($myChapterID)-1),$text,$myChapterID,$myModuleID,$bool);   //Zwischenspeicherung vom Kompletten bearbeitetem Kapitel
+        $myPage = str_replace($search,$replace,$myPage);                                                                                            //Einfügen vom Kompletten bearbeitetem Kapitel
+
+        //---------------HandInButton----------------
+        
+        if($ODB->getHandInToChapter($myChapterID)==1){
+            $search = array('%ButtonText%');
+            $replace = array("Abgabe deaktivieren");
+            $myPage = str_replace($search,$replace,$myPage);
+        }else{
+            $search = array('%ButtonText%');
+            $replace = array("Abgabe aktivieren");
+            $myPage = str_replace($search,$replace,$myPage);
+        }
+        
+        if(isset($_POST['HandInButton'])){
+            if($ODB->getHandInToChapter($myChapterID)==1){
+                $ODB->setHandInToChapter(0,$myChapterID);
+                header("Location: ../PHP/chapterEditor.php?moduleID=$myModuleID&chapterID=$myChapterID");
+            }else{
+                $ODB->setHandInToChapter(1,$myChapterID);
+                header("Location: ../PHP/chapterEditor.php?moduleID=$myModuleID&chapterID=$myChapterID");
+            }
+        }
+       
+        $toAdd = "";
+        $images =$ODB->getAllPicsFromModuleID($myModule -> getID());                                                                                //Zwischenspeicherung von allen Modulbilder
+
+        for ($i=0; $i< sizeof($images) ;$i++){                                                                                                      //Zwischenspeicherung von allen Modulbilder in jeweilige Module
+
+            $myRow = file_get_contents('../HTML/chapterEditorGalleryPic.html');
+            $myRow = str_replace("%Link%",$images[$i],$myRow);
+            $toAdd = $toAdd . $myRow;
+        }
+        $myPage = str_replace('%Pics%',$toAdd,$myPage);                                                                                             //Einfügen von allen Modulbilder in die Seite
 
 
-	$toAdd = "";
-    $images =$ODB->getAllPicsFromModuleID($myModule -> getID());                                                                                //Zwischenspeicherung von allen Modulbilder
-
-	for ($i=0; $i< sizeof($images) ;$i++){                                                                                                      //Zwischenspeicherung von allen Modulbilder in jeweilige Module
-     
-        $myRow = file_get_contents('../HTML/chapterEditorGalleryPic.html');
-		$myRow = str_replace("%Link%",$images[$i],$myRow);
-		$toAdd = $toAdd . $myRow;
-    }
-	$myPage = str_replace('%Pics%',$toAdd,$myPage);                                                                                             //Einfügen von allen Modulbilder in die Seite
-   
-    
-        echo $myPage;                                                                                                                           //Anzeigen der Seite
+            echo $myPage;                                                                                                                           //Anzeigen der Seite
 	}
 	
 ?>

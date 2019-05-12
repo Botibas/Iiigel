@@ -71,17 +71,38 @@
 
 				%Module%
 				
+                
+                <!--Gruppe beitreten-->
 				<div id="MCont" class="col-md-3 col-xs-6 noPadding">
-    				<div id="%ID%" class="modul plusBox">
+    				<div id="%ID%" class="modul plusBox" >
 
         				<div id = "PlusButton">      
-
-						<button id="PlusButton" class="btn btn-default" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-plus" style="width:100%; color: rgba(255, 255, 255, 0.6) !important; font-size:100px; font-weight: lighter; "></span></button>
+                            
+						      <button id="PlusButton" class="btn btn-default" data-toggle="modal" data-target="#myModal"><div id="addModuleText" style="text-align: center;font-size:2vw; color: rgba(255, 255, 255, 0.8) !important; font-family: Open Sans">Gruppe beitreten</div><span class="glyphicon glyphicon-plus" style="width:100%; color: rgba(255, 255, 255, 0.6) !important; font-size:100px; font-weight: lighter; "></span></button>
+                            
+                        
 
 						</div>
 		
     				</div>
 				</div>
+                
+                <!--Gruppe erstellen
+                %ToggleCreateGroup%-->
+                <div id="MCont" class="col-md-3 col-xs-6 noPadding">
+    				<div id="%ID%" class="modul plusBox">
+
+        				<div id = "PlusButton">      
+                            
+						      <button id="PlusButton" class="btn btn-default" data-toggle="modal" data-target="#createGroupModal"><div id="addModuleText" style="text-align: center;font-size:2vw; color: rgba(255, 255, 255, 0.8) !important; font-family: Open Sans">Gruppe erstellen</div><span class="glyphicon glyphicon-plus" style="width:100%; color: rgba(255, 255, 255, 0.6) !important; font-size:100px; font-weight: lighter; "></span></button>
+                            
+                        
+
+						</div>
+		
+    				</div>
+				</div>
+                
 
 			</div>
 
@@ -117,6 +138,67 @@
                                 </form>
 							</div>
 
+						</div>
+					</div>
+        
+        <!-- Modal für Gruppe erstellen -->
+        <div id="createGroupModal" class="modal fade" role="dialog">
+						<div class="modal-dialog">
+
+							<!-- Modal content-->
+							<div class="modal-content">
+								<div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal" onclick="deleteDanger()">&times;</button>
+									<h4 class="modal-title">Neue Gruppe erstellen</h4>
+								</div>
+								<form action="AdminGroupHinzufugen.php" id="myForm" method="post" autocomplete="off">
+									<div class="modal-body" style="min-height:130px;">
+										<div class="form-group">
+											<div id="addGroup" class="col-md-3">
+			
+				<input name="sName" id="sName" type="text" class="addForm" style="margin-bottom: 5px" placeholder="Gruppenname">
+				<input name="sInstitutionID" id="sInstitutionID" type="hidden" value="%InstitutionID%" class="addForm" placeholder="Gruppenname">
+				<div class="dropdown">
+
+					<select class="btn btn-default dropdown-toggle addForm" style="margin-bottom: 5px" name="ModulID">
+						%Listitems%
+						<span class="caret"></span>
+                    </select>
+				</div>
+                
+                <div class="dropdown">
+
+					<select class="btn btn-default dropdown-toggle addForm" style="margin-bottom: 5px" name="UserID">
+						%UListitems%
+						<span class="caret"></span>
+                    </select>
+				</div>
+                
+                
+
+
+
+				<!--button type="submit" id="Button" name="AddButton" class="btn btn-default col-md-6">
+					Hinzufügen
+				</button--->
+			
+
+		</div>
+											<span id="passError" class="text-danger"></span>
+										</div>
+
+									</div>
+									<!---type="submit" value="text" name="newPass" -->
+								
+								<div class="modal-footer">
+                                    <button type="submit" style="margin-top: 10px"  id="ModalBtn" class="btn btn-default">Modul erstellen</button>
+									
+								</div>
+                                </form>
+							</div>
+                            <!-- Stuff from AdminGroup -->
+                            
+                            <!--Ende-->
 						</div>
 					</div>
 		

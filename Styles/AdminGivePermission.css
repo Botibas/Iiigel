@@ -299,7 +299,10 @@ body {
             color:#ddd;
         }
 
-			
+.active {
+    background-color: #e31465;
+}
+
 .noPadding {
 	padding:0 !important;
 }

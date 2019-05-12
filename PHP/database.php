@@ -7,7 +7,7 @@
         include_once("Model/Chapter.php");
         include_once("Model/Module.php");
         include_once("Model/RegistrationLink.php");
-        include_once("Model/HandIn.php");
+        //include_once("Model/HandIn.php");
        
         
     class Database
@@ -26,10 +26,13 @@
         private $stmtisUserinInstitution;
         private $stmtisTrainerofGroup;
 		private $stmtisNewHandIn;
-        private $stmthasPermissiontoView;
-        private $stmthasPermissiontoEdit;
-        private $stmthasPermissiontoCreate;
-        private $stmthasPermissiontoDelete;
+        private $stmtchapterHasHandIn;
+        
+        private $stmtHasPermissionToView;
+        private $stmtHasPermissionToEdit;
+        private $stmtHasPermissionToCreate;
+        private $stmtHasPermissionToDelete;
+        
         private $stmtisGroupLink;
         private $stmtisInstitutionLink;
         private $stmtisGroupLinkgueltig;
@@ -63,6 +66,7 @@
         private $stmtGetModulesFromInstitution;
         private $stmtGetGroupsFromInstitution;
         private $stmtGetPermissionsFromName;
+        private $stmtGetPermissionsFromUserID;
         private $stmtGetModuleImageFromID;
         private $stmtGetInstitutionsFromUserID;
         private $stmtGetHighestIndexFromChapter;
@@ -88,6 +92,7 @@
         private $stmtGetAllAktiveLinksFromGroup;
         private $stmtGetAllAktiveLinksFromInstitution;
         private $stmtGetAllChaptersFromModuleID;
+        private $stmtGetCurriculumFromModuleID;
         private $stmtGetAllInstitutionsFromLeader;
         
         private $stmtCountInstitutions;
@@ -122,6 +127,7 @@
         private $stmtGetIDofPermissionGroup;
         //-------------------------------------------------
         
+        
         private $stmtSetProfilePic;
         private $stmtSetFortschrittFromUserinGroup;
         private $stmtSetFortschrittforallUsersinGroup;
@@ -135,10 +141,12 @@
         private $stmtSetChapterTextFromID;
         private $stmtSetModuleImageFromID;
         private $stmtSetChapterIndexFromID;
+        private $stmtsetHandInToChapter;
+        private $stmtgetHandInToChapter;
         private $stmtMakeUsertoTrainer;
         private $stmtMakeUsertoNotTrainer;
         private $stmtAcceptHandIn;
-        private $stmtUpdatePermissionView;
+        private $stmtUpdatePermission;
         private $stmtUpdatePermissionEdit; 
         private $stmtUpdatePermissionCreate;
         private $stmtUpdatePermissionDelete;
@@ -164,6 +172,8 @@
         //------------------------------------------------
         
         private $stmtdeactivateUser;
+        private $stmtdeactivateGroup;
+        private $stmtdeleteUserFromGroup;
         private $stmtdeleteUser;
         private $stmtdeletGroupsRegistrationLinks;
         private $stmtdeleteChapter;
@@ -194,16 +204,27 @@
             $this->stmtisUserinInstitution = $this->db_connection->prepare("SELECT * FROM usertoinstitution WHERE UserID = ? AND InstitutionID = ?");
             $this->stmtisTrainerofGroup = $this->db_connection->prepare("SELECT * FROM usertogroup WHERE UserID = ? AND GroupID = ? AND bIsTrainer = 1 ");
 			$this->stmtisNewHandIn = $this->db_connection->prepare("SELECT * FROM handins WHERE UserID = ? AND GroupID = ? AND ChapterID = ? AND bIsAccepted = 0 AND isRejected = 0");
-            $this->stmthasPermissiontoView = $this->db_connection->prepare("SELECT * FROM rights WHERE UserID = ? AND Name = ? AND (ID = ? OR ID IS NULL) AND canView = 1 AND isDeleted = 0");
-            $this->stmthasPermissiontoEdit = $this->db_connection->prepare("SELECT * FROM rights WHERE UserID = ? AND Name = ? AND (ID = ? OR ID IS NULL) AND canEdit = 1 AND isDeleted = 0");
-            $this->stmthasPermissiontoCreate = $this->db_connection->prepare("SELECT * FROM rights WHERE UserID = ? AND Name = ? AND (ID = ? OR ID IS NULL) AND canCreate = 1 AND isDeleted = 0");
-            $this->stmthasPermissiontoDelete = $this->db_connection->prepare("SELECT * FROM rights WHERE UserID = ? AND Name = ? AND (ID = ? OR ID IS NULL) AND canDelete = 1 AND isDeleted = 0");
+            $this->stmtchapterHasHandIn = $this->db_connection->prepare("SELECT bIsMandatoryHandIn FROM chapters WHERE ID = ? AND bIsDeleted = 0");
+            
+            
+            //-------------------------------HasPermission--------------------------------------------------------------------------------
+            $this->stmtHasPermissionToView = $this->db_connection->prepare("SELECT * FROM rights WHERE UserID = ? AND (Name = 'TN' OR Name = 'GlobalEditor' OR Name = 'ModulEditor' OR Name = 'TrainerAndEditor' OR Name = 'Trainer') AND isDeleted = 0");
+            
+            $this->stmtHasPermissionToEdit = $this->db_connection->prepare("SELECT * FROM rights WHERE UserID = ? AND (Name = 'GlobalEditor' OR Name = 'ModulEditor' OR Name = 'TrainerAndEditor') AND isDeleted = 0");
+            
+            $this->stmtHasPermissionToCreate = $this->db_connection->prepare("SELECT * FROM rights WHERE UserID = ? AND Name = ? AND (ID = ? OR ID IS NULL) AND canCreate = 1 AND isDeleted = 0");
+            
+            $this->stmtHasPermissionToDelete = $this->db_connection->prepare("SELECT * FROM rights WHERE UserID = ? AND Name = ? AND (ID = ? OR ID IS NULL) AND canDelete = 1 AND isDeleted = 0");
+            //---------------------------------------------------------------------------------------------------------------------------
+            
             $this->stmtisGroupLink = $this->db_connection->prepare("SELECT * FROM registrationlinkgroup WHERE Link = ? AND CURRENT_DATE() BETWEEN StartDatum AND EndDatum");
             $this->stmtisInstitutionLink = $this->db_connection->prepare("SELECT * FROM registrationlinkinstitution WHERE Link = ?");
             $this->stmtisGroupLinkgueltig = $this->db_connection->prepare("SELECT * FROM registrationlinkgroup WHERE Link = ? AND CURRENT_DATE() BETWEEN StartDatum AND EndDatum");
             $this->stmtisInstitutionLinkgueltig = $this->db_connection->prepare("SELECT * FROM registrationlinkinstitution WHERE Link = ? AND StartDatum >= CURDATE() AND EndDatum <= CURDATE()");
             $this->stmtisUserDeleted = $this->db_connection->prepare("SELECT * FROM users WHERE ID = ? AND bIsDeleted = 1");
+            
             $this->stmtisAdmin = $this->db_connection->prepare("SELECT * FROM rights WHERE UserID = ? AND Name = 'Globaladmin' AND isDeleted = 0");
+            $this->stmtisTN = $this->db_connection->prepare("SELECT * FROM rights WHERE UserID = ? AND Name = 'TN' AND isDeleted = 0");
             $this->stmtisEditor = $this->db_connection->prepare("SELECT * FROM rights WHERE UserID = ? AND Name = 'canEdit' AND isDeleted = 0");
             $this->stmtisInstitutionsLeader = $this->db_connection->prepare("SELECT * FROM usertoinstitution WHERE UserID = ? AND bIsInstitutionleader = 1");
             $this->stmtisGroupLinkTaken = $this->db_connection->prepare("SELECT * FROM registrationlinkgroup WHERE Link = ? AND CURRENT_DATE() BETWEEN StartDatum AND EndDatum");
@@ -288,7 +309,7 @@
             $this->stmtGetAllAktiveLinksFromInstitution = $this->db_connection->prepare("SELECT * FROM registrationlinkinstitution WHERE InstitutionID = ? AND CURRENT_DATE() BETWEEN StartDatum AND EndDatum");
             $this->stmtGetAllChaptersFromModuleID = $this->db_connection->prepare("SELECT * FROM chapters WHERE ModulID = ?");
             $this->stmtGetAllInstitutionsFromLeader = $this->db_connection->prepare("SELECT * FROM usertoinstitution INNER JOIN institutions ON usertoinstitution.InstitutionID = institutions.ID WHERE UserID = ? AND bIsInstitutionleader = 1 AND bIsDeleted = 0");
-            
+            $this->stmtGetCurriculumFromModuleID = $this->db_connection->prepare("SELECT curriculum FROM modules WHERE ID = ?");
             //-----------------------------------------------------------------------------------------------------------------------------------
             
             $this->stmtGetInstitutionsFromUserID = $this->db_connection->prepare("SELECT * FROM institutions INNER JOIN usertoinstitution ON institutions.ID = usertoinstitution.InstitutionID WHERE UserID = ?");
@@ -299,8 +320,15 @@
             $this->stmtGetGroupsFromInstitution = $this->db_connection->prepare("SELECT * FROM groups WHERE InstitutionsID = ? AND bIsDeleted = 0 ORDER BY sName");
             $this->stmtGetHighestIndexFromChapter = $this->db_connection->prepare("SELECT MAX(iIndex) FROM chapters WHERE ModulID = ? AND bIsDeleted=0");
             $this->stmtSearchUsers = $this->db_connection->prepare("SELECT * FROM users WHERE (sUsername LIKE ? OR sFirstName LIKE ? OR sLastName LIKE ?) AND bIsDeleted = 0 ORDER BY sFirstName,sLastName");
+            
+            //--------------------------------------------------GetPermissions--------------------------------------------------
+            
             $this->stmtGetPermissionsFromName = $this->db_connection->prepare("SELECT *, rights.ID AS pID FROM rights INNER JOIN users ON rights.userID = users.ID WHERE rights.Name = ? AND rights.isDeleted = 0 AND users.bIsDeleted = 0");
-            $this->stmtGetPermissionNames = $this->db_connection->prepare("SELECT DISTINCT Name FROM rights WHERE isDeleted = 0 ORDER BY Name");
+            
+            $this->stmtGetPermissionNames = $this->db_connection->prepare("SELECT DISTINCT name FROM rightgroups ORDER BY Name");
+            
+            $this->stmtGetPermissionsFromUserID = $this->db_connection->prepare("SELECT Name FROM rights WHERE UserID = ?");
+            
             
             //--------------------------------------------------------- UPDATES -----------------------------------------------------------------
             $this->stmtSetProfilePic = $this->db_connection->prepare("UPDATE users SET sProfilePicture = ? WHERE ID = ?");
@@ -316,10 +344,12 @@
             $this->stmtSetChapterTextFromID = $this->db_connection->prepare("UPDATE chapters SET sText = ? WHERE ID = ?");
             $this->stmtSetModuleImageFromID = $this->db_connection->prepare("UPDATE modules SET sPfadBild = ? WHERE ID = ?");
             $this->stmtSetChapterIndexFromID = $this->db_connection->prepare("UPDATE chapters SET iIndex = ? WHERE ID = ?");
+            $this->stmtsetHandInToChapter = $this->db_connection->prepare("UPDATE chapters SET bIsMandatoryHandIn = ? WHERE ID = ?");
+            $this->stmtgetHandInToChapter = $this->db_connection->prepare("SELECT bIsMandatoryHandIn FROM chapters WHERE ID = ?");
             $this->stmtMakeUsertoTrainer = $this->db_connection->prepare("UPDATE usertogroup SET bIsTrainer = 1 WHERE UserID = ? AND GroupID = ?");
             $this->stmtMakeUsertoNotTrainer = $this->db_connection->prepare("UPDATE usertogroup SET bIsTrainer = 0 WHERE UserID = ? AND GroupID = ?");
             $this->stmtAcceptHandIn = $this->db_connection->prepare("UPDATE handins SET bIsAccepted = 1 WHERE UserID = ? AND GroupID = ? AND ChapterID = ? AND ID = ?");
-            $this->stmtUpdatePermissionView = $this->db_connection->prepare("UPDATE rights SET canView = ? WHERE UserID = ? AND Name = ? AND (ID = ? OR ID IS NULL)");
+            $this->stmtUpdatePermission = $this->db_connection->prepare("UPDATE rights SET Name = ? WHERE UserID = ?");
             $this->stmtUpdatePermissionEdit = $this->db_connection->prepare("UPDATE rights SET canEdit = ? WHERE UserID = ? AND Name = ? AND (ID = ? OR ID IS NULL) ");
             $this->stmtUpdatePermissionCreate = $this->db_connection->prepare("UPDATE rights SET canCreate = ? WHERE UserID = ? AND Name = ? AND (ID = ? OR ID IS NULL) ");
             $this->stmtUpdatePermissionDelete = $this->db_connection->prepare("UPDATE rights SET canDelete = ? WHERE UserID = ? AND Name = ? AND (ID = ? OR ID IS NULL)");
@@ -345,6 +375,8 @@
             //------------------------------------------------------- DELETES ------------------------------------------------------------------
             
             $this->stmtdeactivateUser = $this->db_connection->prepare("UPDATE users SET bIsDeleted = 1 WHERE ID = ?");
+            $this->stmtdeactivateGroup = $this->db_connection->prepare("UPDATE groups SET bIsDeleted = 1 WHERE ID = ?");
+            $this->stmtdeleteUserFromGroup = $this->db_connection->prepare("DELETE FROM usertogroup WHERE UserID = ? AND GroupID = ?");
             $this->stmtdeleteUserUsers = $this->db_connection->prepare("DELETE FROM users WHERE ID = ?");
             $this->stmtdeleteUserHandins = $this->db_connection->prepare("DELETE FROM handins WHERE UserID = ?");
             $this->stmtdeleteUserRights = $this->db_connection->prepare("DELETE FROM rights WHERE UserID = ?");
@@ -590,7 +622,17 @@
 				return false;			
 			}
 		}
-        
+        public function chapterHasHandIn($ID){
+            $this->stmtchapterHasHandIn->bind_param("i",$ID);
+            $this->stmtchapterHasHandIn->execute();
+            $res = $this->stmtchapterHasHandIn->get_result();
+    
+            if($res=1){
+                return true;
+            }else{
+                return false;
+            }
+        }
         public function isEditor($UserID){
             $this->stmtisEditor->bind_param("i",$UserID);
 			$this->stmtisEditor->execute();
@@ -612,23 +654,28 @@
 				return false;
 			} 
         }
-         
-        public function hasPermission($UserID,$Name,$whichPermission,$ID=NULL){
+        
+        public function isTN($UserID){
+            $this->stmtisTN->bind_param("i",$UserID);
+			$this->stmtisTN->execute();
+			$res = $this->stmtisTN->get_result();
+			if (mysqli_num_rows($res) == 1) {
+				return true;
+			} else{
+				return false;
+			} 
+        }    
+        
+        public function UserHasPermission($UserID,$whichPermission){
            if ($this->isAdmin($UserID)){
                return true;
            } else {
                 switch ($whichPermission) {
                     case "view":
-                        $toExecute = $this->stmthasPermissiontoView;
+                        $toExecute = $this->stmtHasPermissionToView;
                         break;
                     case "edit":
-                        $toExecute = $this->stmthasPermissiontoEdit;
-                        break;
-                    case "create":
-                        $toExecute = $this->stmthasPermissiontoCreate;
-                        break;
-                    case "delete":
-                        $toExecute = $this->stmthasPermissiontoDelete;
+                        $toExecute = $this->stmtHasPermissionToEdit;
                         break;
                     default:
                        throw new Exception('Nur view, edit, create oder delete als Parameter für whichPermission erlaubt.');
@@ -637,7 +684,7 @@
 			
 
                 if (isset($toExecute)){
-                   $toExecute->bind_param("isi",$UserID,$Name,$ID);
+                   $toExecute->bind_param("i",$UserID);
                    $toExecute->execute();
                    $res = $toExecute->get_result();
                     if (mysqli_num_rows($res) >= 1){
@@ -776,7 +823,7 @@
         
         public function addTrainertoGroup($UserID,$GroupID){
             $ModulID = $this->getModuleFromGroup($GroupID);
-            $this->addPermission($UserID,'ModulChapter',$ModulID,1,0,0,0);
+            //$this->addPermission($UserID,'ModulChapter',$ModulID,1,0,0,0);
             $this->stmtaddTrainertoGroup->bind_param("ii",$UserID,$GroupID);
             $this->stmtaddTrainertoGroup->execute();
         }
@@ -784,7 +831,7 @@
         public function addUsertoGroup($UserID,$GroupID){
             
             $ModulID = $this->getModuleFromGroup($GroupID);
-            $this->addPermission($UserID,'ModulChapter',$ModulID,1,0,0,0);
+            //$this->addPermission($UserID,'ModulChapter',$ModulID,1,0,0,0);
             $this->stmtaddUsertoGroup->bind_param("ii",$UserID,$GroupID);
             $this->stmtaddUsertoGroup->execute();
         }
@@ -1178,6 +1225,8 @@
             }
         }
         
+
+        
         public function getModulesFromInstitution($InstitutionID){
             $this->stmtGetModulesFromInstitution->bind_param("i",$InstitutionID);
             $this->stmtGetModulesFromInstitution->execute();
@@ -1352,6 +1401,18 @@
             return $res;
         }
         
+       public function getPermissionsFromUserID($UserID){
+            $this->stmtGetPermissionsFromUserID->bind_param("i",$UserID);
+            $this->stmtGetPermissionsFromUserID->execute();
+            $res = $this->stmtGetPermissionsFromUserID->get_result(); 
+            if (mysqli_num_rows($res) == 1){
+                $row = mysqli_fetch_array($res);
+                return $row['Name'];
+            } else {
+              throw new exception('Keine User oder mehrere User mit dieser ID');  
+            }
+            
+        }
         //------------------------RightGroups---TV-----------------------------------------------
         
         /*public function getLengthOfPermissionGroupTable(){
@@ -1785,6 +1846,20 @@
             return $res;
         }
         
+        public function GetCurriculumFromModuleID($moduleID){
+            $this->stmtGetCurriculumFromModuleID->bind_param("i",$moduleID);
+            $this->stmtGetCurriculumFromModuleID->execute();
+            $res = $this->stmtGetCurriculumFromModuleID->get_result(); 
+            if (mysqli_num_rows($res) == 1){
+                $row = mysqli_fetch_array($res);
+                return $row['curriculum'];
+            } else {
+              throw new exception('Keine User oder mehrere User mit dieser ID');  
+            }
+            
+        }
+        
+        
         //---------------------------------------------------------- UPDATE ---------------------------------------------------------------------
         
         public function setProfilePic($sProfilePic,$ID){
@@ -1858,6 +1933,18 @@
             $this->stmtSetChapterIndexFromID->bind_param("ii",$Index,$ID);
             $this->stmtSetChapterIndexFromID->execute();
         }
+        public function setHandInToChapter($newSetHandIn,$ID){
+                $this->stmtsetHandInToChapter->bind_param("ii",$newSetHandIn,$ID);
+                $this->stmtsetHandInToChapter->execute();
+        }
+        
+        public function getHandInToChapter($ID){
+            $this->stmtgetHandInToChapter->bind_param("i",$ID);
+            $this->stmtgetHandInToChapter->execute();
+            $res = $this->stmtgetHandInToChapter->get_result();    
+            $row = mysqli_fetch_array($res);
+            return $row[bIsMandatoryHandIn];
+        }
         
         public function makeUsertoTrainerorNotTrainer($UserID,$GroupID){
             $isTrainer = $this->isTrainerofGroup($UserID,$GroupID);
@@ -1883,10 +1970,10 @@
             $this->stmtAcceptHandIn->execute();
         }
         
-        public function updatePermission($UserID,$Name,$whichPermission,$value,$ID=NULL){
-            switch ($whichPermission) {
+        public function updatePermission($UserID,$whichPermission){
+            /*switch ($whichPermission) {
                     case "view":
-                        $toExecute = $this->stmtUpdatePermissionView;
+                        $toExecute = $this->stmtUpdatePermission;
                         break;
                     case "edit":
                         $toExecute = $this->stmtUpdatePermissionEdit;
@@ -1900,13 +1987,15 @@
                     default:
                        throw new Exception('Nur view, edit, create oder delete als Parameter für whichPermission erlaubt.');
                        return false;
-                } 
+                }*/ 
 
-                if (isset($toExecute)){
-                   $toExecute->bind_param("iisi",$value,$UserID,$Name,$ID);
-                   $toExecute->execute();
-                }    
-        }
+                //if (isset($toExecute)){
+                    $this->stmtUpdatePermission->bind_param("si",$whichPermission,$UserID);
+                    $this->stmtUpdatePermission->execute(); 
+                   //$toExecute->bind_param("i",$UserID);
+                   //$toExecute->execute();
+        }    
+        
         
         public function updateCompletePermission($newUserID,$newName,$newID,$newcanView,$newcanEdit,$newcanCreate,$newcanDelete,$UserID,$Name,$ID,$canView,$canEdit,$canCreate,$canDelete){
             $this->stmtUpdateCompletePermission->bind_param("isiiiiiisiiiii",$newUserID,$newName,$newID,$newcanView,$newcanEdit,$newcanCreate,$newcanDelete,$UserID,$Name,$ID,$canView,$canEdit,$canCreate,$canDelete);
@@ -1918,6 +2007,14 @@
         public function deactivate($ID){
             $this->stmtdeactivateUser->bind_param("i",$ID);
             $this->stmtdeactivateUser->execute();
+        }
+        public function deactivateGroup($ID){
+            $this->stmtdeactivateGroup->bind_param("i",$ID);
+            $this->stmtdeactivateGroup->execute();
+        }
+        public function deleteUserFromGroup($userID,$groupID){
+            $this->stmtdeleteUserFromGroup->bind_param("ii",$userID,$groupID);
+            $this->stmtdeleteUserFromGroup->execute();
         }
         public function deleteUser($ID){
             $this->stmtdeleteUserUsers->bind_param("i",$ID);

@@ -57,14 +57,19 @@
                     <tbody>
                         %Tablerow%					
 						<tr> 
-							<td class="fulltd" colspan="6"> <button id="PlusTNBtn" class="btn btn-default" data-toggle="modal" data-target="#myTNModal"> <span class="glyphicon glyphicon-plus"></span> </button> </td> 
+							<td class="fulltd" colspan="6"> <button id="PlusTNBtn" class="btn btn-default" data-toggle="modal" data-target="#myTNModal"> <span class="glyphicon glyphicon-plus"></span> </button> </td>
+                    
 						</tr>
+                        
+                     
                     </tbody>
+                    <h4><b>Curriculum</b></h4>
+                    %CurriculumText%
                 </table>
             </div>
 			
-			
-
+            
+            
             <!-- Modal Abgabe -->
             <div id="myModal" class="modal fade" role="dialog">
                 <div class="modal-dialog" style="width:85%;">
@@ -128,6 +133,11 @@
                 <div class="btn-group" role="group">
 
                     <a href="%TogglelinkK%"><button id="ChapterViewButton" class="btn btn-default"> <span class="glyphicon glyphicon-list"></span>  Kapitel</button></a>
+                    
+                    <form method="post" autocomplete="off">
+                        <button id="TrainerViewButton" name="DeleteGroupButton" class="btn btn-default" style="background:#FFFFFF; position:relative; bottom:34px; left:130px;"> <span class="glyphicon glyphicon-trash" ></span> Gruppe löschen </button>
+                    </form>
+                    
                 </div>
 
                 <div id="AllLevelUp">
@@ -169,6 +179,7 @@
                         </tbody>
                     </table>
                 </div>
+             
 
             </div>
 

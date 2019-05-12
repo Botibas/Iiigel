@@ -4,7 +4,7 @@
 	 $myPage = file_get_contents('../HTML/trainerModulview.html');
 	 include_once("database.php");
 	include_once("Navigation.php");
-	 $grey = "#ddd";
+	 $grey = "#dddddd";
 	 $red = "#ff0000";
 	 $color = $grey;
 
@@ -26,9 +26,13 @@
 	  exit;
 	 }   
     
+    $myGroup = $ODB->getGroupFromID($currentGroupID);
 
-    //
-    $myGroup = $ODB->getGroupFromID($currentGroupID);//AL Zieht aus der Datenbank, in welcher Gruppe und welchem Modul man ist
+    $search = array('%CurriculumText%');
+    $replace = array($ODB->GetCurriculumFromModuleID($myGroup->getModulID()));
+    $myPage = str_replace($search,$replace,$myPage);
+
+   //AL Zieht aus der Datenbank, in welcher Gruppe und welchem Modul man ist
     $myModule = $ODB->getModuleFromID($myGroup->getModulID());
     $search = array('%Gruppenname%', '%Institution%', '%GroupID%');
     $replace = array($myGroup->getsName(), $ODB->getInstitutionFromID($myGroup-> getInstitutionsID())->getsName(), $currentGroupID);
@@ -39,8 +43,12 @@
     $toAdd = "";
 
     $myModuleID = $myModule->getID();
+    if(isset($_POST['DeleteGroupButton'])){
+        $ODB->deactivateGroup($currentGroupID);
+        header("Location: ../index.php");
+    }
     if ($_POST){
-        
+     
         if(isset($_POST['levelUpforAll'])){
             $ODB->setFortschrittforallUsersinGroup($_POST['levelUpforAll'],$currentGroupID);
             header("Refresh:0");   
@@ -63,8 +71,9 @@
                         $id =$myGroup ->teilnehmer[$i]->getID();
                         if($id!=$myUserID){
                             $lastDeletedUser = $id;
-                            $ODB->removeUserFromGroup($id,$currentGroupID);
+                            $ODB->deleteUserFromGroup($id,$currentGroupID);
                             echo '<html><head><meta charset="utf-8"/><meta http-equiv="refresh" content="0; URL=https://iiigel.de/PHP/trainerModulview.php?groupID='.$currentGroupID.'" /></head></html>'; 
+                           
                         }
                     }
                 }

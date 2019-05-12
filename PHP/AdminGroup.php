@@ -48,7 +48,7 @@
         $myRow = str_replace($search,$replace,$myRow);
         $Uadd = $Uadd . $myRow;
         
-        $myUsers = $ODB->getUsersFromInstitution($_GET['InstitutionsID']);                                           //Zwischenspeicherung aller Nutzer einer Institution
+        $myUsers = $ODB->getAllUsers();                                           //Zwischenspeicherung aller Nutzer einer Institution
         for ($a=0;$a<sizeof($myUsers);$a++){                                                                         //Auflistung aller Nutzer mit Namen und ID
             $myRow = file_get_contents('../HTML/AdminUserListItem.html');
             $search = array('%Username%','%UserID%');

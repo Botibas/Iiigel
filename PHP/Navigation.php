@@ -17,7 +17,8 @@
 		// Editor
 		$userIsEditor = false;
         $userIsLeader = false;
-		
+        $myUser = $GLOBALS["ODB"]->getUserFromID($_SESSION['user']); 
+        
 		$editor = file_get_contents('../HTML/NavigationEditor.html');
         $leader = file_get_contents('../HTML/NavigationInstitutionLeader.html');
 		$toAdd = "";
@@ -70,10 +71,10 @@
         
         
 		$editor = str_replace("%ModulListe%",$toAdd,$editor);
-		if (($userIsEditor === true)or($GLOBALS["ODB"]->isAdmin($_SESSION['user']))){//AL Wenn man Editor oder Admin ist
-			$navigation = str_replace("%Editor%",$editor,$navigation);//AL Sieht man den Editor Button
+		if($GLOBALS["ODB"]->UserHasPermission($_SESSION['user'],"edit")){//AL Wenn man Editor oder Admin ist
+            $navigation = str_replace("%Editor%",$editor,$navigation);//AL Sieht man den Editor Button
 		} else {
-				$navigation = str_replace("%Editor%","",$navigation);//AL Sonst nicht
+            $navigation = str_replace("%Editor%","",$navigation);//AL Sonst nicht
 		}
         
 		if($GLOBALS["ODB"]->isAdmin($_SESSION['user'])) {		//Admin Dropdown 

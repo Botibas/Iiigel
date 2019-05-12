@@ -22,11 +22,10 @@
 	$sessionID = $_SESSION['user'];
 	echo str_replace("%sessionID%",$sessionID, $myPage);
 	 
-	if(!$ODB->hasPermission($_SESSION['user'],"ProfilEditor","edit",$userID) and $_SESSION['user']!=$userID ) {
-		$myPage = file_get_contents('../HTML/Error.html');
-		echo $myPage;
-        exit;
-    } else {
+    if(!$ODB->UserHasPermission($_SESSION['user'],"view")) {
+       echo "Sie haben nicht die benötigte Berechtigung um diese Seite anzusehen.";
+       exit;
+    }else {
 
 	$myPage = str_replace('%Navigation%',getNavigation(),$myPage);
 	if ( isset($_POST['btn-save']) ) {
@@ -100,7 +99,7 @@
 
 		
       }
-	}
+    }
 ?>
 
 

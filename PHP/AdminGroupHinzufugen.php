@@ -13,6 +13,7 @@
             $newGroupID = $ODB->getGroupIDFromName($_POST['sName']);    
             $ODB->addTrainertoGroup($_POST['UserID'],$newGroupID); 
         }
-        header("Location: AdminGroup.php?InstitutionsID=".$_POST['sInstitutionID']);
+        //header("Location: AdminGroup.php?InstitutionsID=".$_POST['sInstitutionID']);
+        header("Location: ../PHP/AdminGroupDetailView.php?GroupID=".$newGroupID);
     }
 ?>

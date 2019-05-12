@@ -47,6 +47,7 @@
 
 			%Navigation%
             %Toggle%
+            %ToggleChapterHandIn%
 		</div>
 
 		<div class="row">
@@ -56,20 +57,59 @@
 			<div class="col-md-1 col-xs-1 nopadding myBox"></div>
 			<div id="Chapter_window" class="col-md-5 col-xs-5 nopadding myBox">
 				<form>
-					<button onclick="insertAtCursor(document.getElementById('editor_textarea'),'[headline]  [/headline] '); return false;" class="btn btn-default noMarginTop"> [headline]</button>
-					<button onclick="insertAtCursor(document.getElementById('editor_textarea'),'[big]   [/big]'); return false;" class="btn btn-default noMarginTop"> [big]        
+                    
+					<button onclick="insertAtCursor(document.getElementById('editor_textarea'),'[headline]  [/headline] '); return false;" class="btn btn-default noMarginTop"> 
+                        [headline]
                     </button>
-					<button onclick="insertAtCursor(document.getElementById('editor_textarea'),'[code]   [/code]'); return false;" class="btn btn-default noMarginTop"> [code]       </button>
-					<button onclick="insertAtCursor(document.getElementById('editor_textarea'),'[tasks]    [/tasks]'); return false;" class="btn btn-default noMarginTop"> [tasks]      </button>
-					<button onclick="insertAtCursor(document.getElementById('editor_textarea'),'[task]   [/task]'); return false;" class="btn btn-default noMarginTop"> [task]       </button>
-					<button onclick="insertAtCursor(document.getElementById('editor_textarea'),'[break]'); return false;" class="btn btn-default noMarginTop"> [break]      </button>
-					<button onclick="insertAtCursor(document.getElementById('editor_textarea'),'[li]   [/li]'); return false;" class="btn btn-default noMarginTop"> [li]         </button>
-					<button onclick="return false;" class="btn btn-default noMarginTop" data-toggle="modal" data-target="#myModal"> [pic]       </button>
-					<button onclick="return false;" class="btn btn-default noMarginTop" data-toggle="modal" data-target="#youtubeModal"> [youtube]       </button>
+                    
+					<button onclick="insertAtCursor(document.getElementById('editor_textarea'),'[big]   [/big]'); return false;" class="btn btn-default noMarginTop"> 
+                        [big]        
+                    </button>
+                    
+					<button onclick="insertAtCursor(document.getElementById('editor_textarea'),'[code]   [/code]'); return false;" class="btn btn-default noMarginTop"> 
+                        [code]      
+                    </button>
+                    
+					<button onclick="insertAtCursor(document.getElementById('editor_textarea'),'[tasks]    [/tasks]'); return false;" class="btn btn-default noMarginTop"> 
+                        [tasks]      
+                    </button>
+                    
+					<button onclick="insertAtCursor(document.getElementById('editor_textarea'),'[task]   [/task]'); return false;" class="btn btn-default noMarginTop">
+                        [task]       
+                    </button>
+                    
+					<button onclick="insertAtCursor(document.getElementById('editor_textarea'),'[break]'); return false;" class="btn btn-default noMarginTop"> 
+                        [break]      
+                    </button>
+                    
+					<button onclick="insertAtCursor(document.getElementById('editor_textarea'),'[li]   [/li]'); return false;" class="btn btn-default noMarginTop"> 
+                        [li]         
+                    </button>
+                    
+					<button onclick="return false;" class="btn btn-default noMarginTop" data-toggle="modal" data-target="#myModal"> 
+                        [pic]
+                    </button>
+                    
+					<button onclick="return false;" class="btn btn-default noMarginTop" data-toggle="modal" data-target="#youtubeModal">       [youtube]       
+                    </button>
+                 
+                  
+                   
+                   
+               </form> 
+                  <form method="post" autocomplete="off">
+                         <button class="btn btn-default noMarginTop" name="HandInButton">     
+                            %ButtonText%
+                        </button>
+                </form>
+                
+                <form>
 					<textarea id="editor_textarea" class="col-md-12 col-xs-12 noPadding myBox" onkeyup="update()">
                         %ChapterTextRaw%                   
                     </textarea>
-				</form>
+                </form>   
+				
+              
 			</div>
 		</div>
 	</div>

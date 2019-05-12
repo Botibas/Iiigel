@@ -11,40 +11,42 @@
         header("Location: ../index.php");
         exit;
     }
+     
+    $myUser = $ODB->getUserFromID($_SESSION['user']); 
     //TV Wenn der User nicht die Berechtigung hat
-	if(!$ODB->hasPermission($_SESSION['user'],"Modul","edit",$myChapterID) ) {
-        echo "Sie haben nicht die benötigte Berechtigung um diese Seite anzusehen.";
-        exit;
-    } else {
+	if(!$ODB->UserHasPermission($_SESSION['user'],"edit")) {
+       echo "Sie haben nicht die benötigte Berechtigung um diese Seite anzusehen.";
+       exit;
+    }else {
 
-	global $myModule;
-    $myModule = $ODB->getModuleFromID($_GET['moduleID']);
-    $moduleID= $myModule->getID();
-		
-	
-	$myPage = str_replace('%Navigation%',getNavigation(),$myPage);
+        global $myModule;
+        $myModule = $ODB->getModuleFromID($_GET['moduleID']);
+        $moduleID= $myModule->getID();
 
-	 if ( isset($_POST['btn-save']) ) {
-        $error = false;
-		/*TV PREVENT SQL INJECTION*/
-		$modulename = trim($_POST['modulename']);
-		$modulename = strip_Tags($modulename);
-		$modulename = htmlspecialchars($modulename);
-		
-		$description = trim($_POST['description']);
-		$description = strip_Tags($description);
-		$description = htmlspecialchars($description);
-  
-        if( !$error ) {
-           if (!empty($modulename)) {$ODB->setModuleNameFromID($modulename,$moduleID);};
-           if (!empty($description)) {$ODB->setModuleDescriptionFromID($description,$moduleID);};
-            unset($modulename);
-            unset($description);
-		    header("Location: editModul.php?moduleID=".$moduleID);
-	   } 
 
-		
-      }
+        $myPage = str_replace('%Navigation%',getNavigation(),$myPage);
+
+         if ( isset($_POST['btn-save']) ) {
+            $error = false;
+            /*TV PREVENT SQL INJECTION*/
+            $modulename = trim($_POST['modulename']);
+            $modulename = strip_Tags($modulename);
+            $modulename = htmlspecialchars($modulename);
+
+            $description = trim($_POST['description']);
+            $description = strip_Tags($description);
+            $description = htmlspecialchars($description);
+
+            if( !$error ) {
+               if (!empty($modulename)) {$ODB->setModuleNameFromID($modulename,$moduleID);};
+               if (!empty($description)) {$ODB->setModuleDescriptionFromID($description,$moduleID);};
+                unset($modulename);
+                unset($description);
+                header("Location: editModul.php?moduleID=".$moduleID);
+           } 
+
+
+          }
 	}
 ?>
 
